@@ -1,6 +1,7 @@
 import Sidebar from "./Sidebar";
 import Content from "./Content";
 
+
 export default function HomePage() {
   return (
     <main>

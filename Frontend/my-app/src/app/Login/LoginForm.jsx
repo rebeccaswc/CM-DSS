@@ -18,7 +18,7 @@ function LoginForm() {
     // pwd = 12345678
 
     if (username === 'CSC666@ntust.pokémon.master.edu.tw' && password === '12345678') {
-      router.push('/HomePage');
+      router.push('/Home');
     } else {
       console.log("Invalid credentials");
       setLoginFailed(true); 
