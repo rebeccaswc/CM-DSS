@@ -8,7 +8,6 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
-import Head from "next/head";
 
 
 
