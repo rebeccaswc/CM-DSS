@@ -1,6 +1,6 @@
 "use client";
 
-import LoginPage from "./Login/LoginPage";
+import LoginPage from "./Login/page";
 import HomePage from "./Home/page";
 
 
