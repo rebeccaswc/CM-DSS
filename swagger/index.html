@@ -1,0 +1,564 @@
+<!doctype html>
+<html>
+  <head>
+    <title>CM-DSS_API</title>
+    <style type="text/css">
+      body {
+      	font-family: Trebuchet MS, sans-serif;
+      	font-size: 15px;
+      	color: #444;
+      	margin-right: 24px;
+      }
+      
+      h1	{
+      	font-size: 25px;
+      }
+      h2	{
+      	font-size: 20px;
+      }
+      h3	{
+      	font-size: 16px;
+      	font-weight: bold;
+      }
+      hr	{
+      	height: 1px;
+      	border: 0;
+      	color: #ddd;
+      	background-color: #ddd;
+      }
+      
+      .app-desc {
+        clear: both;
+        margin-left: 20px;
+      }
+      .param-name {
+        width: 100%;
+      }
+      .license-info {
+        margin-left: 20px;
+      }
+      
+      .license-url {
+        margin-left: 20px;
+      }
+      
+      .model {
+        margin: 0 0 0px 20px;
+      }
+      
+      .method {
+        margin-left: 20px;
+      }
+      
+      .method-notes	{
+      	margin: 10px 0 20px 0;
+      	font-size: 90%;
+      	color: #555;
+      }
+      
+      pre {
+        padding: 10px;
+        margin-bottom: 2px;
+      }
+      
+      .http-method {
+       text-transform: uppercase;
+      }
+      
+      pre.get {
+        background-color: #0f6ab4;
+      }
+      
+      pre.post {
+        background-color: #10a54a;
+      }
+      
+      pre.put {
+        background-color: #c5862b;
+      }
+      
+      pre.delete {
+        background-color: #a41e22;
+      }
+      
+      .huge	{
+      	color: #fff;
+      }
+      
+      pre.example {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      code {
+        white-space: pre;
+      }
+      
+      .nickname {
+        font-weight: bold;
+      }
+      
+      .method-path {
+        font-size: 1.5em;
+        background-color: #0f6ab4;
+      }
+      
+      .up {
+        float:right;
+      }
+      
+      .parameter {
+        width: 500px;
+      }
+      
+      .param {
+        width: 500px;
+        padding: 10px 0 0 20px;
+        font-weight: bold;
+      }
+      
+      .param-desc {
+        width: 700px;
+        padding: 0 0 0 20px;
+        color: #777;
+      }
+      
+      .param-type {
+        font-style: italic;
+      }
+      
+      .param-enum-header {
+      width: 700px;
+      padding: 0 0 0 60px;
+      color: #777;
+      font-weight: bold;
+      }
+      
+      .param-enum {
+      width: 700px;
+      padding: 0 0 0 80px;
+      color: #777;
+      font-style: italic;
+      }
+      
+      .field-label {
+        padding: 0;
+        margin: 0;
+        clear: both;
+      }
+      
+      .field-items	{
+      	padding: 0 0 15px 0;
+      	margin-bottom: 15px;
+      }
+      
+      .return-type {
+        clear: both;
+        padding-bottom: 10px;
+      }
+      
+      .param-header {
+        font-weight: bold;
+      }
+      
+      .method-tags {
+        text-align: right;
+      }
+      
+      .method-tag {
+        background: none repeat scroll 0% 0% #24A600;
+        border-radius: 3px;
+        padding: 2px 10px;
+        margin: 2px;
+        color: #FFF;
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>CM-DSS_API</h1>
+    <div class="app-desc">This is a the api for the CM-DSS</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="hello@helloreverb.com">hello@helloreverb.com</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:/REBECCA200381_1/CM-DSS/1.0.0</div>
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Alert">Alert</a></h4>
+  <ul>
+  <li><a href="#getAlertList"><code><span class="http-method">get</span> /alert</code></a></li>
+  </ul>
+  <h4><a href="#Chat">Chat</a></h4>
+  <ul>
+  <li><a href="#addchat"><code><span class="http-method">post</span> /chat</code></a></li>
+  </ul>
+  <h4><a href="#Solution">Solution</a></h4>
+  <ul>
+  <li><a href="#getAlertSolution"><code><span class="http-method">get</span> /solution</code></a></li>
+  </ul>
+  <h4><a href="#Summary">Summary</a></h4>
+  <ul>
+  <li><a href="#getAlertSummary"><code><span class="http-method">get</span> /summary</code></a></li>
+  </ul>
+
+  <h1><a name="Alert">Alert</a></h1>
+  <div class="method"><a name="getAlertList"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /alert</code></pre></div>
+    <div class="method-summary">Return alert all list (<span class="nickname">getAlertList</span>)</div>
+    <div class="method-notes">Can get all alert lists to display in the Homepage</div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#AlertList">AlertList</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "number" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "level" : "high",
+  "ip" : "192.168.14.34",
+  "alertDate" : "2000-01-23",
+  "alertID" : "FIG-121"
+}, {
+  "number" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "level" : "high",
+  "ip" : "192.168.14.34",
+  "alertDate" : "2000-01-23",
+  "alertID" : "FIG-121"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    search alerts successfully!!!!
+        
+    <h4 class="field-label">400</h4>
+    bad input parameter
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Chat">Chat</a></h1>
+  <div class="method"><a name="addchat"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /chat</code></pre></div>
+    <div class="method-summary">User sends text to chat with openAI (<span class="nickname">addchat</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#string">string</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#chatResponsePayload">chatResponsePayload</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>"Nanami Lucia"</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    successfully sended message!!!!
+        <a href="#chatResponsePayload">chatResponsePayload</a>
+    <h4 class="field-label">400</h4>
+    bad input parameter
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Solution">Solution</a></h1>
+  <div class="method"><a name="getAlertSolution"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /solution</code></pre></div>
+    <div class="method-summary">Return alert solution (<span class="nickname">getAlertSolution</span>)</div>
+    <div class="method-notes">Can get alert solutuon in chatpage</div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">alertID (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; pass an alertID for looking up solution </div>    </div>  <!-- field-items -->
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#AlertSolution">AlertSolution</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ "Review and Update Authentication Mechanisms: Implement strong password policies that require complex passwords. Consider using multi-factor authentication (MFA) to add an additional layer of security. Disable SSH access for non-essential users and ensure that only necessary accounts have SSH access.", "Review and Update Authentication Mechanisms: Implement strong password policies that require complex passwords. Consider using multi-factor authentication (MFA) to add an additional layer of security. Disable SSH access for non-essential users and ensure that only necessary accounts have SSH access." ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    search solution successfully!!!!
+        
+    <h4 class="field-label">400</h4>
+    bad input parameter
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Summary">Summary</a></h1>
+  <div class="method"><a name="getAlertSummary"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /summary</code></pre></div>
+    <div class="method-summary">Return alert summary (<span class="nickname">getAlertSummary</span>)</div>
+    <div class="method-notes">Can get alert summary in chatpage</div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">alertID (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; pass an alertID for looking up summary </div>    </div>  <!-- field-items -->
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#AlertSummary">AlertSummary</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "overview" : {
+    "Impact" : {
+      "Severity Level" : "5 (Critical)",
+      "Fired Times" : "349"
+    },
+    "Date of Occurrence" : "April 11, 14:04:27",
+    "Industries Affected" : "All Industries",
+    "ThreatName" : "Incident Report for Rule",
+    "ID" : "5710"
+  },
+  "keyPoint" : {
+    "MITRE ATT&CK Techniques" : {
+      "T1078" : "Valid Accounts",
+      "T1110" : "Brute Force",
+      "T1203" : "Exploitation for Client Execution (if applicable)"
+    },
+    "Source IP" : "170.64.161.109",
+    "Rule Description" : "Attempt to login using a non-existent user"
+  },
+  "analysis" : "The repeated login attempts from the source IP address indicate a potential brute-force attack targeting SSH services. The use of non-existent usernames suggests that the attacker is attempting to guess valid accounts or exploit weak"
+}, {
+  "overview" : {
+    "Impact" : {
+      "Severity Level" : "5 (Critical)",
+      "Fired Times" : "349"
+    },
+    "Date of Occurrence" : "April 11, 14:04:27",
+    "Industries Affected" : "All Industries",
+    "ThreatName" : "Incident Report for Rule",
+    "ID" : "5710"
+  },
+  "keyPoint" : {
+    "MITRE ATT&CK Techniques" : {
+      "T1078" : "Valid Accounts",
+      "T1110" : "Brute Force",
+      "T1203" : "Exploitation for Client Execution (if applicable)"
+    },
+    "Source IP" : "170.64.161.109",
+    "Rule Description" : "Attempt to login using a non-existent user"
+  },
+  "analysis" : "The repeated login attempts from the source IP address indicate a potential brute-force attack targeting SSH services. The use of non-existent usernames suggests that the attacker is attempting to guess valid accounts or exploit weak"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    search summary successfully!!!!
+        
+    <h4 class="field-label">400</h4>
+    bad input parameter
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#AlertList"><code>AlertList</code></a></li>
+    <li><a href="#AlertSolution"><code>AlertSolution</code></a></li>
+    <li><a href="#AlertSummary"><code>AlertSummary</code></a></li>
+    <li><a href="#AlertSummary_keyPoint"><code>AlertSummary_keyPoint</code></a></li>
+    <li><a href="#AlertSummary_keyPoint_MITRE ATTCK Techniques"><code>AlertSummary_keyPoint_MITRE ATTCK Techniques</code></a></li>
+    <li><a href="#AlertSummary_overview"><code>AlertSummary_overview</code></a></li>
+    <li><a href="#AlertSummary_overview_Impact"><code>AlertSummary_overview_Impact</code></a></li>
+    <li><a href="#chatMessagePayload"><code>chatMessagePayload</code></a></li>
+    <li><a href="#chatResponsePayload"><code>chatResponsePayload</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="AlertList"><code>AlertList</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">number (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">alertID (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: FIG-121</span></div>
+<div class="param">ip (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: ipv4</div>
+          <div class="param-desc"><span class="param-type">example: 192.168.14.34</span></div>
+<div class="param">level (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: high</span></div>
+<div class="param">alertDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#date">date</a></span>  format: date</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="AlertSolution"><code>AlertSolution</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+          </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="AlertSummary"><code>AlertSummary</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">overview (optional)</div><div class="param-desc"><span class="param-type"><a href="#AlertSummary_overview">AlertSummary_overview</a></span>  </div>
+<div class="param">keyPoint (optional)</div><div class="param-desc"><span class="param-type"><a href="#AlertSummary_keyPoint">AlertSummary_keyPoint</a></span>  </div>
+<div class="param">analysis (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: The repeated login attempts from the source IP address indicate a potential brute-force attack targeting SSH services. The use of non-existent usernames suggests that the attacker is attempting to guess valid accounts or exploit weak</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="AlertSummary_keyPoint"><code>AlertSummary_keyPoint</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">Rule Description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Attempt to login using a non-existent user</span></div>
+<div class="param">Source IP (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 170.64.161.109</span></div>
+<div class="param">MITRE ATT&amp;CK Techniques (optional)</div><div class="param-desc"><span class="param-type"><a href="#AlertSummary_keyPoint_MITRE ATTCK Techniques">AlertSummary_keyPoint_MITRE ATTCK Techniques</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="AlertSummary_keyPoint_MITRE ATTCK Techniques"><code>AlertSummary_keyPoint_MITRE ATTCK Techniques</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">T1078 (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Valid Accounts</span></div>
+<div class="param">T1110 (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Brute Force</span></div>
+<div class="param">T1203 (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Exploitation for Client Execution (if applicable)</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="AlertSummary_overview"><code>AlertSummary_overview</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">ThreatName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Incident Report for Rule</span></div>
+<div class="param">ID (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 5710</span></div>
+<div class="param">Date of Occurrence (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: April 11, 14:04:27</span></div>
+<div class="param">Industries Affected (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: All Industries</span></div>
+<div class="param">Impact (optional)</div><div class="param-desc"><span class="param-type"><a href="#AlertSummary_overview_Impact">AlertSummary_overview_Impact</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="AlertSummary_overview_Impact"><code>AlertSummary_overview_Impact</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">Severity Level (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 5 (Critical)</span></div>
+<div class="param">Fired Times (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 349</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="chatMessagePayload"><code>chatMessagePayload</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+          </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="chatResponsePayload"><code>chatResponsePayload</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+          </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
