@@ -14,20 +14,20 @@ import {
 } from '@heroicons/react/24/solid';
 
 const sidebarItems = [
-  { icon: <HomeIcon className="h-4 w-4  text-white"/>,
+  { icon: <HomeIcon className="h-4 w-4 text-white"/>,
     text: "Home", 
     isActive: true 
   },
   {
-    icon: <Squares2X2Icon  className="h-4 w-4  text-white"/>,
+    icon: <Squares2X2Icon  className="h-4 w-4 text-white"/>,
     text: "Dashboard",
   },
   {
-    icon: <BellAlertIcon className="h-4 w-4  text-white"/>,
+    icon: <BellAlertIcon className="h-4 w-4 text-white"/>,
     text: "Alert",
   },
   {
-    icon: <ChatBubbleLeftEllipsisIcon className="h-4 w-4  text-white"/>,
+    icon: <ChatBubbleLeftEllipsisIcon className="h-4 w-4 text-white"/>,
     text: "Chat",
   },
   {
@@ -42,7 +42,7 @@ const sidebarItems = [
 
 function Sidebar() {
   return (
-    <nav className="h-full w-full bg-[#7B579A] bg-opacity-80 flex flex-col">
+    <nav className="h-screen min-w-max bg-[#7B579A] bg-opacity-80 flex flex-col">
           <div className="pt-4 pl-2">
             <BrowseButton/>
           </div>

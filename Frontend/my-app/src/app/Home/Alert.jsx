@@ -65,14 +65,14 @@ function Alert() {
   }
 
   return (
-    <div className="w-full h-screen bg-[#1d203e] p-6">
+    <div className="w-full h-screen bg-[#1d203e] p-12">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Alert List</h2>
         <button className="text-white/60">See all</button>
       </div>
       <div className="bg-black/50 rounded-[20px] border-2 border-[#64b5e2] overflow-hidden">
       
-        <Table>
+        <Table> 
           <TableHeader className="bg-gradient-to-b from-[#64DCE5] via-[#637CDC] via-[#624CD8] to-[#621CD3] rounded-t-[18px] ">
             <TableRow>
               {["No.", "Alert ID", "IP Address", "Level", "Alert Date"].map(
@@ -98,7 +98,7 @@ function Alert() {
                 <TableCell className="text-white px-8 py-3 items-center whitespace-nowrap">{data.number}</TableCell>
                 <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.id}</TableCell>
                 <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.ip}</TableCell>
-                <TableCell className="text-white text-center items-center whitespace-nowrap">{data.level}</TableCell>
+                <TableCell className="text-white px-5 py-3 items-center whitespace-nowrap">{data.level}</TableCell>
                 <TableCell className="text-white px-7 py-3 items-center whitespace-nowrap">{data.date}</TableCell>
                 <TableCell>
                   <button
