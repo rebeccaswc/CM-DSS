@@ -6,20 +6,23 @@ import Header from "./Header";
 import Summary from "./Summary";
 import ChatInput from "./ChatInput";
 
-function MyComponent() {
+function Chatpage() {
   return (
-    <main className="flex overflow-hidden flex-col text-white rounded-2xl">
-      <div className="flex flex-col px-1 w-full bg-pink-500 rounded-[30px] max-md:max-w-full">
+    <main className="flex overflow-hidden flex-col text-white ">
+      <div className="flex flex-col px-1 h-screen w-screen bg-[#1d203e] max-md:max-w-full">
         <Header />
-        <section className="flex flex-col justify-center items-center px-20 py-11 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] max-md:px-5 max-md:max-w-full">
+        <section className="flex flex-col justify-center items-center px-20 py-11 max-md:px-5 max-md:max-w-full">
           <div className="flex flex-col w-full max-w-[765px] max-md:max-w-full">
             <Summary />
-            <ChatInput />
           </div>
+          <div className="flex flex-col w-full max-w-[765px] max-md:max-w-full absolute insert-x-0 bottom-10 ">
+        <ChatInput />
+        </div>
         </section>
+        
       </div>
     </main>
   );
 }
 
-export default MyComponent;
+export default Chatpage;

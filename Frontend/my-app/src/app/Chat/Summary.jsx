@@ -5,7 +5,7 @@ import React from "react";
 
 function Summary() {
   return (
-    <article className="flex flex-col px-8 py-6 w-full rounded-3xl max-md:px-5 max-md:max-w-full">
+    <article className="flex flex-col px-8 py-6 w-full rounded-3xl max-md:px-5 max-md:max-w-full bg-gradient-to-br from-neutral-950 via-[#120d50] to-[#1a1095] rounded-[20px]">
       <div className="flex flex-wrap gap-5 justify-between mr-3 w-full max-md:mr-2.5 max-md:max-w-full">
         <div className="flex gap-3">
           <img
