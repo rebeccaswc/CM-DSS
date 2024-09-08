@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Table,
@@ -8,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
+import { useRouter } from 'next/navigation';
 
 function Alert() {
   const datas = [
@@ -55,6 +58,12 @@ function Alert() {
     },
   ];
 
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/Chat')
+  }
+
   return (
     <div className="w-full h-screen bg-[#1d203e] p-6">
       <div className="flex justify-between items-center mb-4">
@@ -96,6 +105,7 @@ function Alert() {
                     className={`w-full max-w-[235px] h-[25px] rounded-[30px] border text-center text-white text-xs font-bold ${
                       index % 2 === 0 ? "bg-[#db61c6]" : "bg-[#72c7e8]"
                     } sm:max-w-[200px] sm:h-[30px] md:max-w-[220px] md:h-[35px] lg:max-w-[235px] lg:h-[40px] xl:max-w-[250px] xl:h-[45px]`}
+                    onClick={handleClick}
                   >
                     SUMMARY & QUERY
                   </button>
