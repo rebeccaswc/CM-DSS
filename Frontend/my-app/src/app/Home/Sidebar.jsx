@@ -36,7 +36,7 @@ const sidebarItems = [
   },
   {
     icon: <Cog6ToothIcon className="h-4 w-4  text-white"/>,
-    text: "System Center",
+    text: "Setting",
   },
 ];
 

@@ -4,22 +4,25 @@
 import React from "react";
 import Header from "./Header";
 import Summary from "./Summary";
+import Sidebar from "../Home/Sidebar";
 import ChatInput from "./ChatInput";
 
 function Chatpage() {
   return (
-    <main className="flex overflow-hidden flex-col text-white ">
-      <div className="flex flex-col px-1 h-screen w-screen bg-[#1d203e] max-md:max-w-full">
+    <main className="h-screen flex text-white ">
+      <div className="w-2/12">
+        <Sidebar />
+      </div>
+      <div className="w-10/12 flex flex-col ">
         <Header />
-        <section className="flex flex-col justify-center items-center px-20 py-11 max-md:px-5 max-md:max-w-full">
-          <div className="flex flex-col w-full max-w-[765px] max-md:max-w-full">
+        <section className="flex-1 flex flex-col bg-[#1d203e] px-20 py-11 overflow-y-auto max-md:px-5">
+          <div className="flex-1 w-full max-w-[765px] mx-auto">
             <Summary />
           </div>
-          <div className="flex flex-col w-full max-w-[765px] max-md:max-w-full absolute insert-x-0 bottom-10 ">
-        <ChatInput />
-        </div>
+          <div className="w-full max-w-[765px] mx-auto mt-4">
+            <ChatInput />
+          </div>
         </section>
-        
       </div>
     </main>
   );
