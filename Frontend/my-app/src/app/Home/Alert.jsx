@@ -1,82 +1,112 @@
 import React from "react";
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table"
-
-
-
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 
 function Alert() {
-    const datas = [
-        {
-            number: '100',
-            id: '1',
-            ip: '1',
-            level: '1',
-            date: '1',
-            detail: '1'
-        },
-        {
-            number: '200',
-            id: '2',
-            ip: '2',
-            level: '2',
-            date: '2',
-            detail: '2'
-        },
-        {
-            number: '3',
-            id: '3',
-            ip: '3',
-            level: '3',
-            date: '3',
-            detail: '3'
-        },
-    ]
+  const datas = [
+    {
+      number: "1",
+      id: "FIG-121",
+      ip: "192.168.14.34",
+      level: "High",
+      date: "May 1",
+    },
+    {
+      number: "2",
+      id: "FIG-125",
+      ip: "203.10.113.45",
+      level: "Low",
+      date: "May 5",
+    },
+    {
+      number: "3",
+      id: "FIG-129",
+      ip: "172.16.254.12",
+      level: "Medium",
+      date: "May 8",
+    },
+    {
+      number: "4",
+      id: "FIG-132",
+      ip: "198.51.100.22",
+      level: "High",
+      date: "May 2",
+    },
+    {
+      number: "5",
+      id: "FIG-136",
+      ip: "191.46.120.31",
+      level: "Medium",
+      date: "May 5",
+    },
+    {
+      number: "6",
+      id: "FIG-139",
+      ip: "192.17.11.123",
+      level: "Low",
+      date: "May 6",
+    },
+  ];
 
-    return(
-        <div>
-            <div className="flex">
-                <h1 className="p-16 text-3xl text-black w-3/4">Alert List</h1>
-                <button className="text-zinc-400">See all</button>   
-            </div>
-            <div className="flex pl-16 pr-16">
-                <Table className="h-60 border-double border-4">
-                    <TableHeader className="bg-[#7B579A] bg-opacity-80">
-                        <TableRow>
-                            <TableHead className="w-[100px] text-black">No.</TableHead>
-                            <TableHead className="text-black">Alert ID</TableHead>
-                            <TableHead className="text-black">IP Address</TableHead>
-                            <TableHead className="text-black">Level</TableHead>
-                            <TableHead className="text-black">Alert Date</TableHead>
-                            <TableHead className="w-[100px] text-black">Datail</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+  return (
+    <div className="w-full h-screen bg-[#1d203e] p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-white">Alert List</h2>
+        <button className="text-white/60">See all</button>
+      </div>
+      <div className="bg-black/50 rounded-[20px] border-2 border-[#64b5e2] overflow-hidden">
+      
+        <Table>
+          <TableHeader className="bg-gradient-to-b from-[#64DCE5] via-[#637CDC] via-[#624CD8] to-[#621CD3] rounded-t-[18px] ">
+            <TableRow>
+              {["No.", "Alert ID", "IP Address", "Level", "Alert Date"].map(
+                (header, index) => (
+                  <TableHead
+                    key={index}
+                    className="text-white px-4 py-3 items-center whitespace-nowrap"
+                  >
+                    <div className="flex items-center">
+                      {header}
+                      <ChevronUpDownIcon className="w-6 h-5 text-white" />
+                    </div>
+                  </TableHead>
+                )
+              )}
+              <TableHead className="text-white px-4 py-3 items-center whitespace-nowrap"></TableHead>
+            </TableRow>
+          </TableHeader>
 
-                        {datas.map((data) => 
-                        <TableRow key={data.number} className="h-16">
-                            <TableCell className="font-medium">{data.number}</TableCell>
-                            <TableCell className="w-24">{data.id}</TableCell>
-                            <TableCell className="w-24">{data.ip}</TableCell>
-                            <TableCell className="w-24">{data.level}</TableCell>
-                            <TableCell className="w-24">{data.date}</TableCell>
-                            <TableCell className="w-24">{data.detail}</TableCell>
-                        </TableRow>)
-                        
-                        }
-                    
-                    </TableBody>
-                </Table>
-            </div>
-        </div>
-    )
+          <TableBody>
+            {datas.map((data, index) => (
+              <TableRow key={data.number}>
+                <TableCell className="text-white px-8 py-3 items-center whitespace-nowrap">{data.number}</TableCell>
+                <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.id}</TableCell>
+                <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.ip}</TableCell>
+                <TableCell className="text-white text-center items-center whitespace-nowrap">{data.level}</TableCell>
+                <TableCell className="text-white px-7 py-3 items-center whitespace-nowrap">{data.date}</TableCell>
+                <TableCell>
+                  <button
+                    className={`w-full max-w-[235px] h-[25px] rounded-[30px] border text-center text-white text-xs font-bold ${
+                      index % 2 === 0 ? "bg-[#db61c6]" : "bg-[#72c7e8]"
+                    } sm:max-w-[200px] sm:h-[30px] md:max-w-[220px] md:h-[35px] lg:max-w-[235px] lg:h-[40px] xl:max-w-[250px] xl:h-[45px]`}
+                  >
+                    SUMMARY & QUERY
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
 }
 
 export default Alert;

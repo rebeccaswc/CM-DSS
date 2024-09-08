@@ -15,14 +15,9 @@ function SidebarItem({ icon, text, isActive }) {
           <div className="self-stretch p-1 my-auto w-6 text-sm font-bold">
             {icon}
           </div>
-        ) : (
-          <img
-            loading="lazy"
-            src={icon}
-            alt=""
-            className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
-          />
-        )}
+        ) : React.isValidElement(icon) ? (
+          <div className="self-stretch p-1 my-auto w-6">{icon}</div>
+        ) : null}
         <button className="self-stretch my-auto text-base">{text}</button>
       </div>
     </div>

@@ -1,11 +1,19 @@
-import React from 'react';
+import React from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 
 function Searchbar() {
   return (
-    <button className="flex gap-1 items-center px-16 max-w-full rounded border border-solid border-white border-opacity-20 w-[442px] max-md:px-5">
-      <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/261d59fafe2a52865f679c34730d0a0f800a283bdb08b6ddd7093f7b64c0e7e9?placeholderIfAbsent=true&apiKey=bae4f78d557141349e757a6705679bd5" className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square" alt="" />
-      <span className="self-stretch my-auto">Explore</span>
-    </button>
+    <div className="w-[1033px] h-11 pl-[296px] pr-[295px] py-2.5 bg-[#2c2f48] justify-center items-center inline-center">
+      <div className="w-[442px] h-6 relative">
+        <div className="w-[442px] h-6 left-0 top-0 absolute bg-gradient-to-b from-[#2e335a] to-[#1c1b33] rounded border-white/20" />
+        <div className="h-6 left-[182px] top-0 absolute justify-start items-center gap-1 inline-flex">
+          <div className="flex items-center text-white gap-2 text-[13px]">
+            <MagnifyingGlassIcon className="w-4 h-4 text-white" />
+            <div className="text-[13px]">Explore</div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

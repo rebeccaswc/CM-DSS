@@ -3,39 +3,51 @@
  */
 import React from "react";
 import SidebarItem from "./SidebarItem";
+import BrowseButton from "../../components/ui/BrowseButton";
+import {
+  Squares2X2Icon,
+  HomeIcon,
+  ChatBubbleLeftEllipsisIcon,
+  DocumentIcon,
+  BellAlertIcon,
+  Cog6ToothIcon
+} from '@heroicons/react/24/solid';
 
 const sidebarItems = [
-  { icon: "􀎭", 
+  { icon: <HomeIcon className="h-4 w-4  text-white"/>,
     text: "Home", 
     isActive: true 
   },
   {
-    icon: "􀎭",
+    icon: <Squares2X2Icon  className="h-4 w-4  text-white"/>,
     text: "Dashboard",
   },
   {
-    icon: "􀎭",
+    icon: <BellAlertIcon className="h-4 w-4  text-white"/>,
     text: "Alert",
   },
   {
-    icon: "􀎭",
+    icon: <ChatBubbleLeftEllipsisIcon className="h-4 w-4  text-white"/>,
     text: "Chat",
   },
   {
-    icon: "􀎭",
+    icon: <DocumentIcon className="h-4 w-4  text-white"/>,
     text: "File",
   },
   {
-    icon: "􀎭",
+    icon: <Cog6ToothIcon className="h-4 w-4  text-white"/>,
     text: "System Center",
   },
 ];
 
 function Sidebar() {
   return (
-    <nav className="flex overflow-hidden flex-col max-w-[251px] bg-[#7B579A] bg-opacity-80">
-      <div className="flex overflow-hidden flex-col items-start pt-14 pr-7 pl-2.5 w-full pb-[548px]">
-        <div className="flex flex-col self-stretch tracking-wide text-white whitespace-nowrap">
+    <nav className="h-full w-full bg-[#7B579A] bg-opacity-80 flex flex-col">
+          <div className="pt-4 pl-2">
+            <BrowseButton/>
+          </div>
+      <div className="flex flex-col items-start pt-4 pl-2 flex-grow overflow-y-auto">
+        <div className="flex flex-col w-full tracking-wide text-white whitespace-nowrap">
           {sidebarItems.map((item, index) => (
             <SidebarItem key={index} {...item} />
           ))}
