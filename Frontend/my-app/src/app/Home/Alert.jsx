@@ -59,13 +59,20 @@ function Alert() {
   ];
 
   const router = useRouter();
+  var current_data = [];
 
-  const handleClick = () => {
+  const handleClick = (index) => {
+    get_current_data(index)
     router.push('/Chat')
   }
 
+  function get_current_data(index) {
+    current_data = datas[index]
+    console.log(index)
+  }
+
   return (
-    <div className="w-full h-screen bg-[#1d203e] p-12">
+    <div className="w-full bg-[#1d203e] p-12">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Alert List</h2>
         <button className="text-white/60">See all</button>
@@ -83,7 +90,9 @@ function Alert() {
                   >
                     <div className="flex items-center">
                       {header}
-                      <ChevronUpDownIcon className="w-6 h-5 text-white" />
+                      <button>
+                        <ChevronUpDownIcon className="w-6 h-5 text-white" />
+                      </button>
                     </div>
                   </TableHead>
                 )
@@ -105,7 +114,7 @@ function Alert() {
                     className={`w-full max-w-[235px] h-[25px] rounded-[30px] border text-center text-white text-xs font-bold ${
                       index % 2 === 0 ? "bg-[#db61c6]" : "bg-[#72c7e8]"
                     } sm:max-w-[200px] sm:h-[30px] md:max-w-[220px] md:h-[35px] lg:max-w-[235px] lg:h-[40px] xl:max-w-[250px] xl:h-[45px]`}
-                    onClick={handleClick}
+                    onClick={() => handleClick(index)}
                   >
                     SUMMARY & QUERY
                   </button>
