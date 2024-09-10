@@ -36,7 +36,7 @@ def get_chat_gpt_response(prompt):
             {"role": "system", "content": "You are a cybersecurity professional specializing in vulnerability assessment."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=50,
+        max_tokens=500,
         temperature=0.2
     )
     return response.choices[0].message.content.strip()
