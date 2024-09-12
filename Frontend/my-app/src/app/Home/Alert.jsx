@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,64 +11,38 @@ import {
 } from "@/components/ui/table";
 import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import { useRouter } from 'next/navigation';
+import axios from 'axios'
 
 function Alert() {
-  const datas = [
-    {
-      number: "1",
-      id: "FIG-121",
-      ip: "192.168.14.34",
-      level: "High",
-      date: "May 1",
-    },
-    {
-      number: "2",
-      id: "FIG-125",
-      ip: "203.10.113.45",
-      level: "Low",
-      date: "May 5",
-    },
-    {
-      number: "3",
-      id: "FIG-129",
-      ip: "172.16.254.12",
-      level: "Medium",
-      date: "May 8",
-    },
-    {
-      number: "4",
-      id: "FIG-132",
-      ip: "198.51.100.22",
-      level: "High",
-      date: "May 2",
-    },
-    {
-      number: "5",
-      id: "FIG-136",
-      ip: "191.46.120.31",
-      level: "Medium",
-      date: "May 5",
-    },
-    {
-      number: "6",
-      id: "FIG-139",
-      ip: "192.17.11.123",
-      level: "Low",
-      date: "May 6",
-    },
-  ];
+
+  const [datas, setDatas] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/alert');
+        if (Array.isArray(response.data)) {
+          setDatas(response.data);
+        } else {
+          console.error('Data fetched is not an array:', response.data);
+          setDatas([]);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setDatas([]);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const router = useRouter();
-  var current_data = [];
+  var alertID;
 
   const handleClick = (index) => {
-    get_current_data(index)
-    router.push('/Chat')
-  }
-
-  function get_current_data(index) {
-    current_data = datas[index]
-    console.log(index)
+    alertID = datas[index]?.alertID;
+    router.push(`/Chat?alertID=${alertID}`);
+    console.log(alertID)
   }
 
   return (
@@ -105,10 +79,10 @@ function Alert() {
             {datas.map((data, index) => (
               <TableRow key={data.number}>
                 <TableCell className="text-white px-8 py-3 items-center whitespace-nowrap">{data.number}</TableCell>
-                <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.id}</TableCell>
+                <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.alertID}</TableCell>
                 <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.ip}</TableCell>
                 <TableCell className="text-white px-5 py-3 items-center whitespace-nowrap">{data.level}</TableCell>
-                <TableCell className="text-white px-7 py-3 items-center whitespace-nowrap">{data.date}</TableCell>
+                <TableCell className="text-white px-7 py-3 items-center whitespace-nowrap">{data.alertDate}</TableCell>
                 <TableCell>
                   <button
                     className={`w-full max-w-[235px] h-[25px] rounded-[30px] border text-center text-white text-xs font-bold ${

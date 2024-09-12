@@ -39,7 +39,7 @@ const sidebarItems = [
 
 function Sidebar() {
   return (
-    <nav className="h-screen min-w-max bg-[#7B579A] bg-opacity-80 flex flex-col">
+    <nav className="h-screen min-w-max bg-[#7B579A] bg-indigo-500 opacity-75 bg-gradient-to-b from-[#2D1175] via-[#763370] via-[#8826AA] to-[#1D1E2C] flex flex-col">
           <div className="pt-4 pl-2">
             <BrowseButton/>
           </div>
