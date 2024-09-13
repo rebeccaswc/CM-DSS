@@ -21,7 +21,7 @@ function Header(params) {
         onClick={handleClick}>
           <ArrowLeft className="w-3 h-3" />
         </button>
-        <div className="px-4 py-1  text-sm bg-gradient-to-b from-[#B945DF] to-[#642579] rounded-full max-md:px-5">{params.alertID}</div>
+        <div className="px-4 py-1  text-sm bg-gradient-to-b from-[#B945DF] to-[#642579] rounded-full max-md:px-5">Alert_ID {params.alertID}</div>
       </div>
       <div className="w-[442px] h-6 relative">
         <div className="w-[442px] h-6 left-0 top-1 px-4 py-1 absolute bg-gradient-to-b from-[#2e335a] to-[#1c1b33] rounded border-solid border-2 border-white/20" />
