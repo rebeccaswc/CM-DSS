@@ -16,6 +16,7 @@ import axios from 'axios'
 function Alert() {
 
   const [datas, setDatas] = useState([]);
+  var sort = "";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,9 +32,11 @@ function Alert() {
         console.error('Error fetching data:', error);
         setDatas([]);
       }
+    
     };
 
     fetchData();
+
   }, []);
 
   const router = useRouter();
@@ -44,6 +47,30 @@ function Alert() {
     router.push(`/Chat?alertID=${alertID}`);
     console.log(alertID)
   }
+
+  const sortClick = async (index) => {
+    const sort_class = ["alertID", "alertID", "Source IP", "Severity Level", "Timestamp"];
+    console.log(sort_class[index]);
+
+    sort = sort_class[index];
+
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/alert',{
+        params: {sort}
+      });
+      if (Array.isArray(response.data)) {
+        setDatas(response.data);
+      } else {
+        console.error('Data fetched is not an array:', response.data);
+        setDatas([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setDatas([]);
+    }
+  };
+
+
 
   return (
     <div className="w-full bg-[#1d203e] p-12">
@@ -64,7 +91,7 @@ function Alert() {
                   >
                     <div className="flex items-center">
                       {header}
-                      <button>
+                      <button onClick={() => sortClick(index)}>
                         <ChevronUpDownIcon className="w-6 h-5 text-white" />
                       </button>
                     </div>
