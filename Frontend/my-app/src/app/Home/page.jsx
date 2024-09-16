@@ -1,6 +1,5 @@
 import Sidebar from "./Sidebar";
 import Content from "./Content";
-import Searchbar from "./Searchbar";
 
 export default function HomePage() {
   return (
