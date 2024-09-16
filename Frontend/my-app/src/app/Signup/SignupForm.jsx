@@ -1,33 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { logInWithPythonService } from "./login.js";
-import InputField from "./InputField.jsx";
-import useStore from "../../useStore";
+import { signUpWithPythonService } from "./signUp.js";
 
-function LoginForm() {
+import InputField from "./InputField.jsx";
+
+function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [loginFailed, setLoginFailed] = useState(false);
+  const [signupFailed, setSignupFailed] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupErrorMessage, setSignupErrorMessage] = useState("");
   const router = useRouter();
-  const setCurrentEmail = useStore((state) => state.setCurrentEmail);// use Zustand's setEmail
 
+  const validateEmail = (email) =>{
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email)
+  }
 
   const signUp = async (e) => {
     e.preventDefault();
-    router.push("/Signup")
+    if (!validateEmail(email)) {
+      setSignupFailed(true);
+      setSignupSuccess(false);
+      setSignupErrorMessage("Please enter a valid email address.");
+      return;
+    }
+    try {
+      const result = await signUpWithPythonService(email, password);
+      handleSignUpSuccess(result);
+    } catch (error) {
+      handleSignUpError(error);
+    }
   };
+  
 
   const signIn = async (e) => {
     e.preventDefault();
-    try{
-      await logInWithPythonService(email, password)
-      setCurrentEmail(email)
-      setLoginFailed(false)
-      router.push("/Home");
-    }catch (e) {
-      console.error('Sign in error:', e);
-      setLoginFailed(true)
+    router.push("/Login");
+  };
+
+  const handleSignUpSuccess = () => {
+    setSignupSuccess(true);
+    setSignupFailed(false);
+    setSignupErrorMessage("");
+  };
+
+  const handleSignUpError = (error) => {
+    setSignupFailed(true);
+    setSignupSuccess(false);
+    if (error.response && error.response.status === 409) {
+      setSignupErrorMessage("Email already registered.");
+    } else {
+      setSignupErrorMessage("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -36,7 +60,9 @@ function LoginForm() {
   };
 
   const handleCloseModal = () => {
-    setLoginFailed(false)
+    setSignupFailed(false);
+    setSignupSuccess(false);
+    setSignupErrorMessage("");
   };
 
   return (
@@ -47,8 +73,11 @@ function LoginForm() {
           className="flex flex-col ml-3.5 max-w-full w-[525px]"
         >
           <h2 className="self-start text-5xl text-black max-md:text-4xl">
-          Welcome <br/> Back!
-                    </h2>
+            Create an account <br />
+          </h2>
+          <p className="flex gap-2 px-2 mt-3 text-gray-400">
+            Please Fill out form to Register!
+          </p>
           <InputField
             label="Email"
             value={email}
@@ -63,49 +92,33 @@ function LoginForm() {
               type="password"
             />
           </div>
-          <div className="flex justify-between items-center mt-2">
-            <div className="flex gap-3.5 text-xs text-neutral-400 text-opacity-80">
-              <input
-                type="checkbox"
-                id="remember"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="shrink-0 bg-white border border-solid border-neutral-400 h-[19px] w-[19px]"
-              />
-              <label htmlFor="remember" className="my-auto basis-auto">
-                Remember me for 30 days
-              </label>
-            </div>
-            <a
-              href="#"
-              className="text-[#B366AE] text-xs"
-            >
-              Forgot Password?
-            </a>
-          </div>
 
           <button
-            onClick={(e) => signIn(e)}
+            onClick={(e) => signUp(e)}
             className="flex items-center justify-center gap-2 px-5 py-4 mt-6 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform rounded-xl text-white font-semibold text-lg border-2 border-gray-100 bg-[#B366AE]"
           >
-            Sign in
+            Sign up
           </button>
 
           <p className="flex items-center justify-center gap-2 px-5 mt-6 text-gray-400 text-base">
-          Not register yet?
-                      <button onClick={(e) => signUp(e)} className="text-sky-500 ">
-                      Create Account Now!
+            Already have an account?
+            <button onClick={(e) => signIn(e)} className="text-sky-500 ">
+              Login in Now!
             </button>
           </p>
         </form>
 
         {/* Conditionally render the success message */}
-        { loginFailed  && (
+
+        {(signupSuccess || signupFailed) && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
               <h3 className="text-xl font-semibold">
-                 Log in Failed!
+                {signupFailed ? "Sign up Failed!" : "Sign up Successful!"}
               </h3>
+              {signupFailed && signupErrorMessage && (
+                <p className="text-gray-400">{signupErrorMessage}</p>
+              )}
               <button
                 onClick={handleCloseModal}
                 className="mt-4 px-4 py-2 rounded-md text-white font-semibold text-lg border-2 border-gray-100 bg-[#B366AE]"
@@ -115,10 +128,9 @@ function LoginForm() {
             </div>
           </div>
         )}
-
       </div>
     </section>
   );
 }
 
-export default LoginForm;
+export default SignupForm;

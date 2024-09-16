@@ -1,10 +1,13 @@
+"use client"; 
 import React from "react";
 import InfoItem from "../../components/ui/InfoItem";
 import { IdentificationIcon, ArrowRightStartOnRectangleIcon, PencilSquareIcon } from '@heroicons/react/24/solid'
+import useStore from "../../useStore";
 
 function InfoList() {
-  const InfoData = [
-    { title: "Account", content: "CSC666@ntust.pokémon.master.edu.tw" },
+    const email = useStore((state) => state.email);  // Get email from Zustand store
+    const InfoData = [
+    { title: "Account", content: email },
     { title: "Password", content: "********" },
     { title: "Billing", content: "Standard Plan"}
   ];

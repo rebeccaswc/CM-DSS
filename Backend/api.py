@@ -1,21 +1,60 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request , make_response
 import pandas as pd
 import openai
 from openai import OpenAI
-import os
+import os , time
 from dotenv import load_dotenv
 from flask_cors import CORS
+from flask import Flask, make_response, request, jsonify
+import jwt
+import pymongo
+import certifi
+import traceback
+from urllib.parse import quote_plus
+from flask_jwt_extended import (
+    JWTManager, create_access_token, get_csrf_token, 
+    jwt_required, get_jwt_identity, set_access_cookies, 
+    verify_jwt_in_request
+)
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Load environment variables from .env
 load_dotenv()
 
 # Initialize Flask
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 # Initialize OpenAI API
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
+
+# Initialize MongoDB 
+username = os.getenv('MONGO_USERNAME')
+password = os.getenv('MONGO_PASSWORD')
+cluster = os.getenv('MONGO_CLUSTER')
+database = os.getenv('MONGO_DATABASE')
+encoded_password = quote_plus(password)
+
+# MongoDB Connection
+uri = f'mongodb+srv://{username}:{encoded_password}@{cluster}/{database}?retryWrites=true&w=majority&appName=UserDB'
+client = pymongo.MongoClient(
+    uri,
+    tlsCAFile=certifi.where()
+)
+db = client[database]
+collection = db['user']
+
+# Initialize JWT
+app.config.update({
+    'JWT_TOKEN_LOCATION': ['cookies'],
+    'JWT_SECRET_KEY': os.getenv('JWT_SECRET_KEY'),
+    'JWT_COOKIE_SECURE': True, 
+    'ACCESS_TOKEN_SECRET_KEY': os.getenv('ACCESS_TOKEN_SECRET_KEY'),
+    'REFRESH_TOKEN_SECRET_KEY': os.getenv('REFRESH_TOKEN_SECRET_KEY')
+})
+jwt_manager = JWTManager(app)
+
 
 def open_file(filepath):
     with open(filepath, 'r', encoding='UTF-8') as file:
@@ -128,6 +167,55 @@ def get_solution():
         "alertID": alert_id,
         "report": report
     })
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return jsonify({"message":"Missing email or password"}) , 400
+        
+        if collection.find_one({"email": email}):
+            return jsonify({"message": "Email already exists"})  ,409
+
+        hasehd_password = generate_password_hash(password)
+        collection.insert_one({"email":email,"password":hasehd_password})
+
+        return jsonify(message="User registered successfully created") , 201
+    
+    except pymongo.errors.PyMongoError as e:
+        print(f"MongoDB error: {traceback.format_exc()} : {e}")
+        return jsonify(message="Error connecting to MongoDB"), 500
+
+@app.route("/login",methods=["POST"])
+def signin():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+                return jsonify({"message":"Missing email or password"}) , 400
+        
+        user = collection.find_one({"email":email})
+        
+        if user and check_password_hash(user["password"],password):
+                access_token = create_access_token(identity={"email" : email})
+                # csrf_token = get_csrf_token(access_token)
+                response = jsonify({"message":"Sign in successfully!"})
+                response.set_cookie('access_token_cookie', value=access_token, httponly=True, secure=True,samesite='None')
+                # response.set_cookie('csrf_access_token', value=csrf_token, httponly=True,secure=True, samesite='Strict')
+                return response, 200
+        else:
+             return jsonify({"message": "Invalid email or password"}), 401
+
+    except pymongo.errors.PyMongoError as e:
+        print(f"MongoDB error: {traceback.format_exc()} : {e}")
+        return jsonify({"message": traceback.format_exc()}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
