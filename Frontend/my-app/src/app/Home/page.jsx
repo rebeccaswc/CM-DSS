@@ -9,7 +9,7 @@ function HomePage(){
   
   const handleClick = (text) => {
     var path = '/' + text;
-    router.push(path);
+    router.push(path.toLowerCase());
   }
 
   return (

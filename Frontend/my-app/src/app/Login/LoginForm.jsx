@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { logInWithPythonService } from "./login.js";
 import InputField from "./InputField.jsx";
-import useStore from "../../useStore";
+import useStore from "../../useStore.js";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ function LoginForm() {
 
   const signUp = async (e) => {
     e.preventDefault();
-    router.push("/Signup")
+    router.push("/signup")
   };
 
   const signIn = async (e) => {
@@ -24,7 +24,7 @@ function LoginForm() {
       await logInWithPythonService(email, password)
       setCurrentEmail(email)
       setLoginFailed(false)
-      router.push("/Home");
+      router.push("/home");
     }catch (e) {
       console.error('Sign in error:', e);
       setLoginFailed(true)

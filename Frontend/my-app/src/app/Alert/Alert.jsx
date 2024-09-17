@@ -44,7 +44,7 @@ function Alert() {
 
   const handleClick = (index) => {
     alertID = datas[index]?.alertID;
-    router.push(`/Chat?alertID=${alertID}`);
+    router.push(`/chat?alertID=${alertID}`);
     console.log(alertID)
   }
 

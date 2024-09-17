@@ -3,11 +3,11 @@ import React from "react";
 import { useRouter } from 'next/navigation';
 
 function SidebarItem({ icon, text, isActive }) {
-  const router = useRouter()
+  const router = useRouter();
   var path = '/' + text
 
   const handleClick = () => {
-    router.push(path)
+    router.push(path.toLowerCase());
   }
 
   return (
