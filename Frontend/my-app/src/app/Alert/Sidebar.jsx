@@ -16,7 +16,6 @@ import {
 const sidebarItems = [
   { icon: <HomeIcon className="h-4 w-4 text-white"/>,
     text: "Home", 
-    isActive: true 
   },
   {
     icon: <Squares2X2Icon  className="h-4 w-4 text-white"/>,
@@ -25,6 +24,7 @@ const sidebarItems = [
   {
     icon: <BellAlertIcon className="h-4 w-4 text-white"/>,
     text: "Alert",
+    isActive: true 
   },
   {
     icon: <ChatBubbleLeftEllipsisIcon className="h-4 w-4 text-white"/>,

@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar";
 import InfoList from "./InfoList";
 
-function Settingpage(){
+function SettingPage(){
     return(
     <main className="h-screen flex">
       <div className="w-2/12">
@@ -16,4 +16,4 @@ function Settingpage(){
     )
 }
 
-export default Settingpage;
+export default SettingPage;

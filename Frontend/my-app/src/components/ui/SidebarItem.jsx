@@ -12,7 +12,7 @@ function SidebarItem({ icon, text, isActive }) {
 
   return (
     <div
-      className={`flex overflow-hidden flex-col justify-center items-start py-2 w-full rounded-md ${
+      className={`flex overflow-hidden flex-col justify-center items-start py-2 w-full rounded-md hover:bg-white hover:bg-opacity-50 ${
         isActive ? "bg-black bg-opacity-50" : ""
       } max-w-[212px]`}
     >

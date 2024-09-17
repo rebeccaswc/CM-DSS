@@ -10,7 +10,7 @@ function Header(params) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push('/Home');
+    router.push('/Alert');
   }
 
   return (

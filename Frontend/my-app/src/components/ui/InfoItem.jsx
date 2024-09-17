@@ -10,7 +10,7 @@ function DetailInfo({ title, content }){
   };
   
   return (
-    <div className="flex flex-col p-4 w-full bg-white rounded-lg border border-solid border-zinc-300 max-md:max-w-full bg-[#2B305C] text-white">
+    <div className="flex flex-col p-4 w-full bg-white rounded-lg border border-solid border-zinc-300 max-md:max-w-full bg-[#2B3051] text-white">
       <div className="flex flex-wrap gap-2 items-center w-full font-[number:var(--sds-typography-body-font-weight-strong)] max-md:max-w-full">
         <div className="flex-1 shrink self-stretch my-auto basis-0 opacity-[var(--sds-size-stroke-border)] max-md:max-w-full font-bold text-xl rounded-lg">
           {title}
