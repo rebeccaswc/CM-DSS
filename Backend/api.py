@@ -5,7 +5,6 @@ from openai import OpenAI
 import os , time
 from dotenv import load_dotenv
 from flask_cors import CORS
-from flask import Flask, make_response, request, jsonify
 import jwt
 import pymongo
 import certifi
@@ -70,31 +69,6 @@ def read_row_from_csv_by_alert_id(filepath, alert_id):
     else:
         return None
     
-@app.route('/alert', methods=['GET'])
-def get_all_alert():
-    filepath = 'data/log_data.csv'
-    row_data = pd.read_csv(filepath)
-    alerts = []
-
-    sort_by = request.args.get('sort')
-    print(f"Data is sort by: {sort_by}")  # Debug line
-
-    if sort_by and sort_by in row_data.columns:
-        row_data = row_data.sort_values(by=sort_by)
-
-    for index, row in row_data.head(9).iterrows():
-        alert = {
-            'number': row['alertID'],
-            'alertID': row['alertID'],
-            'ip': row['Source IP'],
-            'level': row['Severity Level'],
-            'alertDate': row['Timestamp']
-        }
-        alerts.append(alert)
-
-    return jsonify(alerts)
-
-
 def get_chat_gpt_response(prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -138,6 +112,30 @@ def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_t
     return get_chat_gpt_response(prompt)
 
 
+@app.route('/alert', methods=['GET'])
+def get_all_alert():
+    filepath = 'data/log_data.csv'
+    row_data = pd.read_csv(filepath)
+    alerts = []
+
+    sort_by = request.args.get('sort')
+    print(f"Data is sort by: {sort_by}")  # Debug line
+
+    if sort_by and sort_by in row_data.columns:
+        row_data = row_data.sort_values(by=sort_by)
+
+    for index, row in row_data.head(9).iterrows():
+        alert = {
+            'number': row['alertID'],
+            'alertID': row['alertID'],
+            'ip': row['Source IP'],
+            'level': row['Severity Level'],
+            'alertDate': row['Timestamp']
+        }
+        alerts.append(alert)
+
+    return jsonify(alerts)
+
 @app.route('/solution', methods=['GET'])
 def get_solution():
     alert_id = request.args.get('index')
@@ -167,6 +165,17 @@ def get_solution():
         "alertID": alert_id,
         "report": report
     })
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_message = data.get('message')
+    
+    if not user_message:
+        return jsonify({"error": "Message is required"}), 400
+    
+    response = get_chat_gpt_response(user_message)
+    return jsonify({"response": response})
 
 @app.route('/signup', methods=['POST'])
 def signup():
