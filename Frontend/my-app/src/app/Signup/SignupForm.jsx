@@ -36,7 +36,7 @@ function SignupForm() {
 
   const signIn = async (e) => {
     e.preventDefault();
-    router.push("/Login");
+    router.push("/login");
   };
 
   const handleSignUpSuccess = () => {
