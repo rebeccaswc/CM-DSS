@@ -7,12 +7,12 @@ export function middleware(req: NextRequest) {
   // 驗證 token 是否存在
   if (!token) {
     console.log("No token found, redirecting to Login Page");
-    return NextResponse.redirect(new URL("/Login", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/Home", "/Chat", "/Setting","/Dashboard"], // 要套用 middleware 的 router
+  matcher: ["/home", "/chat", "/setting","/dashboard"],
 };

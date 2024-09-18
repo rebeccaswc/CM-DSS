@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signUpWithPythonService } from "./signUp.js";
+import { signUpWithPythonService } from "./signup.js";
 
 import InputField from "./InputField.jsx";
 
