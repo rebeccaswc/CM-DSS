@@ -1,20 +1,19 @@
 from flask import Flask, jsonify, request , make_response
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    jwt_required, create_refresh_token,get_jwt_identity
+)
+import datetime
 import pandas as pd
 import openai
 from openai import OpenAI
-import os , time
+import os
 from dotenv import load_dotenv
 from flask_cors import CORS
-import jwt
 import pymongo
 import certifi
 import traceback
 from urllib.parse import quote_plus
-from flask_jwt_extended import (
-    JWTManager, create_access_token, get_csrf_token, 
-    jwt_required, get_jwt_identity, set_access_cookies, 
-    verify_jwt_in_request
-)
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Load environment variables from .env
@@ -44,15 +43,14 @@ client = pymongo.MongoClient(
 db = client[database]
 collection = db['user']
 
-# Initialize JWT
-app.config.update({
-    'JWT_TOKEN_LOCATION': ['cookies'],
-    'JWT_SECRET_KEY': os.getenv('JWT_SECRET_KEY'),
-    'JWT_COOKIE_SECURE': True, 
-    'ACCESS_TOKEN_SECRET_KEY': os.getenv('ACCESS_TOKEN_SECRET_KEY'),
-    'REFRESH_TOKEN_SECRET_KEY': os.getenv('REFRESH_TOKEN_SECRET_KEY')
-})
-jwt_manager = JWTManager(app)
+# Initialize jwt token
+jwt = JWTManager()
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default-secret-key')
+app.config['JWT_QUERY_STRING_NAME'] = 'jwt'
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'query_string', 'cookies']
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 15)))
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = datetime.timedelta(minutes=int(os.getenv('JWT_REFRESH_TOKEN_EXPIRES', 1440)))
+jwt.init_app(app)
 
 
 def open_file(filepath):
@@ -68,7 +66,7 @@ def read_row_from_csv_by_alert_id(filepath, alert_id):
         return filtered_df.iloc[0]
     else:
         return None
-    
+
 def get_chat_gpt_response(prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -166,16 +164,24 @@ def get_solution():
         "report": report
     })
 
+
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.json
-    user_message = data.get('message')
-    
-    if not user_message:
-        return jsonify({"error": "Message is required"}), 400
-    
-    response = get_chat_gpt_response(user_message)
-    return jsonify({"response": response})
+    try:
+        data = request.get_json()
+        user_message = data.get("message")
+
+        if not user_message:
+            return jsonify({"error": "Message is required"}), 400
+
+        response_message = get_chat_gpt_response(user_message)
+        return jsonify({"response": response_message})
+
+    except Exception as e:
+        print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
+        return jsonify({"error": "An error occurred while processing the request"}), 500
+
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -199,7 +205,7 @@ def signup():
         print(f"MongoDB error: {traceback.format_exc()} : {e}")
         return jsonify(message="Error connecting to MongoDB"), 500
 
-@app.route("/login",methods=["POST"])
+@app.route("/login", methods=["POST"])
 def signin():
     try:
         data = request.get_json()
@@ -207,24 +213,36 @@ def signin():
         password = data.get("password")
 
         if not email or not password:
-                return jsonify({"message":"Missing email or password"}) , 400
+            return jsonify({"message": "Missing email or password"}), 400
         
-        user = collection.find_one({"email":email})
+        user = collection.find_one({"email": email})
         
-        if user and check_password_hash(user["password"],password):
-                access_token = create_access_token(identity={"email" : email})
-                # csrf_token = get_csrf_token(access_token)
-                response = jsonify({"message":"Sign in successfully!"})
-                response.set_cookie('access_token_cookie', value=access_token, httponly=True, secure=True,samesite='None')
-                # response.set_cookie('csrf_access_token', value=csrf_token, httponly=True,secure=True, samesite='Strict')
-                return response, 200
+        if user and check_password_hash(user["password"], password):
+            access_token = create_access_token(identity=email)
+            print(access_token)
+            response = jsonify({"message": "Sign in successfully!"})
+            response.set_cookie('access_token_cookie', value=access_token, httponly=True, secure=True, samesite='None')
+            return response, 200
         else:
-             return jsonify({"message": "Invalid email or password"}), 401
+            return jsonify({"message": "Invalid email or password"}), 401
 
     except pymongo.errors.PyMongoError as e:
         print(f"MongoDB error: {traceback.format_exc()} : {e}")
         return jsonify({"message": traceback.format_exc()}), 500
+    
+@app.route('/protected', methods=['GET', 'POST'])
+@jwt_required()
+def protected(): 
+    return jsonify(msg='ok')
 
+@app.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    ret = {
+        'access_token': create_access_token(identity=identity)
+    }
+    return jsonify(ret), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=3000)
