@@ -24,7 +24,7 @@ function LoginForm() {
       await logInWithPythonService(email, password)
       setCurrentEmail(email)
       setLoginFailed(false)
-      router.push("/home");
+      router.push("/alert");
     }catch (e) {
       console.error('Sign in error:', e);
       setLoginFailed(true)
