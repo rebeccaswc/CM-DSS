@@ -18,7 +18,7 @@ function Summary({index}) {
 
     const fetchSummary = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/solution', {
+        const response = await axios.get('http://127.0.0.1:3000/solution', {
           params:  {index}
         });
         console.log(response.data);
@@ -42,6 +42,10 @@ function Summary({index}) {
     const contentHtml = processedContent.toString();
     console.log("report:", text.report)
     setContentHtml(contentHtml);
+  }
+
+  const p = () => {
+    print(contentHtml);
   }
 
   // return (

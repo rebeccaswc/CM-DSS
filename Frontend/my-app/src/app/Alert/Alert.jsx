@@ -21,7 +21,7 @@ function Alert() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/alert');
+        const response = await axios.get('http://127.0.0.1:3000/alert');
         if (Array.isArray(response.data)) {
           setDatas(response.data);
         } else {
@@ -44,7 +44,7 @@ function Alert() {
 
   const handleClick = (index) => {
     alertID = datas[index]?.alertID;
-    router.push(`/chat?alertID=${alertID}`);
+    router.push(`/query?alertID=${alertID}`);
     console.log(alertID)
   }
 
@@ -55,7 +55,7 @@ function Alert() {
     sort = sort_class[index];
 
     try {
-      const response = await axios.get('http://127.0.0.1:5000/alert',{
+      const response = await axios.get('http://127.0.0.1:3000/alert',{
         params: {sort}
       });
       if (Array.isArray(response.data)) {
