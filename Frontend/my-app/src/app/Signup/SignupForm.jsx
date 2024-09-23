@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signUpWithPythonService } from "./signup.js";
-
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import InputField from "./InputField.jsx";
 
 function SignupForm() {
@@ -9,6 +9,7 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [signupFailed, setSignupFailed] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [signupErrorMessage, setSignupErrorMessage] = useState("");
   const router = useRouter();
 
@@ -84,13 +85,25 @@ function SignupForm() {
             onChange={(e) => setEmail(e.target.value)}
             type="email" 
           />
-          <div className="flex flex-col">
+              <div className="relative flex flex-col">
             <InputField
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
+              type={showPassword ? "text" : "password"}
+              className="pr-10"
             />
+            <button
+              type="button"
+              className="absolute right-6 top-3/4 transform -translate-y-1/4 text-gray-500"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? (
+                <EyeSlashIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
+            </button>
           </div>
 
           <button

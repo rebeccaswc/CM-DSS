@@ -3,31 +3,32 @@ import { useRouter } from "next/navigation";
 import { logInWithPythonService } from "./login.js";
 import InputField from "./InputField.jsx";
 import useStore from "../../useStore.js";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const setCurrentEmail = useStore((state) => state.setCurrentEmail);// use Zustand's setEmail
-
+  const setCurrentEmail = useStore((state) => state.setCurrentEmail); // use Zustand's setEmail
 
   const signUp = async (e) => {
     e.preventDefault();
-    router.push("/signup")
+    router.push("/signup");
   };
 
   const signIn = async (e) => {
     e.preventDefault();
-    try{
-      await logInWithPythonService(email, password)
-      setCurrentEmail(email)
-      setLoginFailed(false)
+    try {
+      await logInWithPythonService(email, password);
+      setCurrentEmail(email);
+      setLoginFailed(false);
       router.push("/alert");
-    }catch (e) {
-      console.error('Sign in error:', e);
-      setLoginFailed(true)
+    } catch (e) {
+      console.error("Sign in error:", e);
+      setLoginFailed(true);
     }
   };
 
@@ -36,7 +37,7 @@ function LoginForm() {
   };
 
   const handleCloseModal = () => {
-    setLoginFailed(false)
+    setLoginFailed(false);
   };
 
   return (
@@ -47,22 +48,35 @@ function LoginForm() {
           className="flex flex-col ml-3.5 max-w-full w-[525px]"
         >
           <h2 className="self-start text-5xl text-black max-md:text-4xl">
-          Welcome <br/> Back!
-                    </h2>
+            Welcome <br /> Back!
+          </h2>
           <InputField
             label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            type="email" 
+            type="email"
           />
-          <div className="flex flex-col">
+          <div className="relative flex flex-col">
             <InputField
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
+              type={showPassword ? "text" : "password"}
+              className="pr-10"
             />
+            <button
+              type="button"
+              className="absolute right-6 top-3/4 transform -translate-y-1/4 text-gray-500"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? (
+                <EyeSlashIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
+            </button>
           </div>
+
           <div className="flex justify-between items-center mt-2">
             <div className="flex gap-3.5 text-xs text-neutral-400 text-opacity-80">
               <input
@@ -76,10 +90,7 @@ function LoginForm() {
                 Remember me for 30 days
               </label>
             </div>
-            <a
-              href="#"
-              className="text-[#B366AE] text-xs"
-            >
+            <a href="#" className="text-[#B366AE] text-xs">
               Forgot Password?
             </a>
           </div>
@@ -92,20 +103,18 @@ function LoginForm() {
           </button>
 
           <p className="flex items-center justify-center gap-2 px-5 mt-6 text-gray-400 text-base">
-          Not register yet?
-                      <button onClick={(e) => signUp(e)} className="text-sky-500 ">
-                      Create Account Now!
+            Not register yet?
+            <button onClick={(e) => signUp(e)} className="text-sky-500 ">
+              Create Account Now!
             </button>
           </p>
         </form>
 
         {/* Conditionally render the success message */}
-        { loginFailed  && (
+        {loginFailed && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-              <h3 className="text-xl font-semibold">
-                 Log in Failed!
-              </h3>
+              <h3 className="text-xl font-semibold">Log in Failed!</h3>
               <button
                 onClick={handleCloseModal}
                 className="mt-4 px-4 py-2 rounded-md text-white font-semibold text-lg border-2 border-gray-100 bg-[#B366AE]"
@@ -115,7 +124,6 @@ function LoginForm() {
             </div>
           </div>
         )}
-
       </div>
     </section>
   );
