@@ -6,7 +6,6 @@ from flask_jwt_extended import (
 import datetime
 import pandas as pd
 import openai
-from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -24,8 +23,7 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 # Initialize OpenAI API
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize MongoDB 
 username = os.getenv('MONGO_USERNAME')
@@ -68,16 +66,22 @@ def read_row_from_csv_by_alert_id(filepath, alert_id):
         return None
 
 def get_chat_gpt_response(prompt):
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a cybersecurity professional specializing in vulnerability assessment."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=500,
-        temperature=0.2
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a cybersecurity professional specializing in vulnerability assessment."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=10,
+            temperature=0.2
+        )   
+        return response.choices[0].message['content'].strip()
+    
+    except Exception as e:
+        print(f"Error in GPT response: {traceback.format_exc()} : {e}")
+        return None
+
 
 def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_technique, rule_id, fired_times, severity_level, timestamp):
     
@@ -172,15 +176,14 @@ def chat():
         user_message = data.get("message")
 
         if not user_message:
-            return jsonify({"error": "Message is required"}), 400
-
+            return jsonify({"error": "Message is required"}), 400 
+    
         response_message = get_chat_gpt_response(user_message)
         return jsonify({"response": response_message})
 
     except Exception as e:
         print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
         return jsonify({"error": "An error occurred while processing the request"}), 500
-
 
 
 @app.route('/signup', methods=['POST'])
