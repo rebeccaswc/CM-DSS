@@ -11,29 +11,24 @@ import {
 } from "@/components/ui/table";
 import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import { useRouter } from 'next/navigation';
-import axios from 'axios'
+import { getAlertList } from "../api/alert";
 
 function Alert() {
 
   const [datas, setDatas] = useState([]);
   var sort = "";
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:3000/alert');
-        if (Array.isArray(response.data)) {
-          setDatas(response.data);
-        } else {
-          console.error('Data fetched is not an array:', response.data);
-          setDatas([]);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setDatas([]);
+
+    const fetchData = async() => {
+      try{
+        const data = await getAlertList(sort);
+        setDatas(data);
+      }catch(error){
+        console.log('Error fetching response:', error);
       }
-    
-    };
+    }
 
     fetchData();
 
@@ -55,28 +50,26 @@ function Alert() {
     sort = sort_class[index];
 
     try {
-      const response = await axios.get('http://127.0.0.1:3000/alert',{
-        params: {sort}
-      });
-      if (Array.isArray(response.data)) {
-        setDatas(response.data);
-      } else {
-        console.error('Data fetched is not an array:', response.data);
-        setDatas([]);
-      }
+      const data = await getAlertList(sort);
+      setDatas(data);
     } catch (error) {
       console.error('Error fetching data:', error);
       setDatas([]);
     }
   };
 
+  const toggleShowAll = () => {
+    setShowAll(!showAll);
+  };
 
+  const displayedData = showAll ? datas : datas.slice(0, 9);
+  console.log(displayedData);
 
   return (
     <div className="w-full bg-[#1d203e] p-12">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Alert List</h2>
-        <button className="text-white/60">See all</button>
+        <button className="text-white/60" onClick={toggleShowAll}>See all</button>
       </div>
       <div className="bg-black/50 rounded-[20px] border-2 border-[#64b5e2] overflow-hidden">
       
@@ -103,7 +96,7 @@ function Alert() {
           </TableHeader>
 
           <TableBody>
-            {datas.map((data, index) => (
+            {displayedData.map((data, index) => (
               <TableRow key={data.number}>
                 <TableCell className="text-white px-8 py-3 items-center whitespace-nowrap">{data.number}</TableCell>
                 <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">{data.alertID}</TableCell>

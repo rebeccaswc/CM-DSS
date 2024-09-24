@@ -40,7 +40,7 @@ function Summary({index}) {
       .process(text.report);
 
     const contentHtml = processedContent.toString();
-    console.log("report:", text.report)
+    console.log("report:", text.report);
     setContentHtml(contentHtml);
   }
 

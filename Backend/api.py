@@ -126,7 +126,7 @@ def get_all_alert():
     if sort_by and sort_by in row_data.columns:
         row_data = row_data.sort_values(by=sort_by)
 
-    for index, row in row_data.head(9).iterrows():
+    for index, row in row_data.iterrows():
         alert = {
             'number': row['alertID'],
             'alertID': row['alertID'],
