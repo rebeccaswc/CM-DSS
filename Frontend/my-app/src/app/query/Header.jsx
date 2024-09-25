@@ -13,6 +13,10 @@ function Header(params) {
     router.push('/alert');
   }
 
+  const print = () => {
+    window.print();
+  }
+
   return (
     <header className="flex overflow-hidden flex-wrap gap-5 justify-between items-start px-6 py-3 w-full text-xs font-medium text-center whitespace-nowrap bg-slate-800 max-md:px-5 max-md:max-w-full">
       <div className="flex gap-2">
@@ -33,7 +37,8 @@ function Header(params) {
         </div>
       </div>
       <div className="flex gap-2.5 px-4 py-1">
-        <button className="flex gap-1 px-3 py-0.5 rounded-3xl bg-stone-900 bg-opacity-30 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
+        <button className="flex gap-1 px-3 py-0.5 rounded-3xl bg-stone-900 bg-opacity-30 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+        onClick={print}>
           <img
             loading="lazy"
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/85e5838a487ebc01c6384a54c3f888c53852ae2643aee593d558cd727671a157?placeholderIfAbsent=true&apiKey=bae4f78d557141349e757a6705679bd5"
