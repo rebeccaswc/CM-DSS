@@ -26,10 +26,10 @@ const sidebarItems = [
     text: "Chat",
     isActive: true,
   },
-  {
-    icon: <DocumentIcon className="h-4 w-4  text-white"/>,
-    text: "File",
-  },
+  // {
+  //   icon: <DocumentIcon className="h-4 w-4  text-white"/>,
+  //   text: "File",
+  // },
   {
     icon: <Cog6ToothIcon className="h-4 w-4  text-white"/>,
     text: "Setting",
