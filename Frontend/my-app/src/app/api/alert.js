@@ -1,5 +1,5 @@
 import axios from "axios";
-const apiUrl = process.env.BACKEND_API;
+const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API;
 
 export const getAlertList = async (sort) => {
   try {
