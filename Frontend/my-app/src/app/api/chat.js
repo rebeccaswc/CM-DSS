@@ -1,8 +1,9 @@
 import axios from "axios";
+const apiUrl = process.env.BACKEND_API;
 
 export const getChatResponse = async (msg) => {
   try {
-    const response = await axios.post('http://127.0.0.1:3000/chat',{
+    const response = await axios.post(`${apiUrl}/chat`,{
         "message": msg
     })
     if (response) {
