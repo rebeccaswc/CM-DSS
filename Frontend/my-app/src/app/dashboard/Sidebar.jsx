@@ -29,10 +29,10 @@ const sidebarItems = [
     icon: <ChatBubbleLeftEllipsisIcon className="h-4 w-4 text-white"/>,
     text: "Chat",
   },
-  // {
-  //   icon: <DocumentIcon className="h-4 w-4  text-white"/>,
-  //   text: "File",
-  // },
+  {
+    icon: <DocumentIcon className="h-4 w-4  text-white"/>,
+    text: "File",
+  },
   {
     icon: <Cog6ToothIcon className="h-4 w-4  text-white"/>,
     text: "Setting",
