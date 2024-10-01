@@ -16,7 +16,13 @@ function SettingPage(){
           </button>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-8">
             <div className="bg-white p-4 rounded-lg shadow flex items-center justify-center w-64 h-64">
-              <LockClosedIcon className="h-24 w-24 text-gray p-8" />
+            <Image
+                        src="/images/network.png" // 路徑從 public 資料夾開始
+                        alt="Network Diagram"
+                        width={400} // 設定圖片寬度
+                        height={400} // 設定圖片高度
+                        className="rounded-lg shadow-lg mb-8"
+                    />
             </div>
             <div className="bg-gray-500 p-4 rounded-lg shadow flex items-center justify-center w-64 h-64">
               <LockClosedIcon className="h-24 w-24 text-white p-8" />
