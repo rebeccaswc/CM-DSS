@@ -17,7 +17,7 @@ function SettingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-8">
             <div className="bg-white p-4 rounded-lg shadow w-64 h-64 relative overflow-hidden">
               <Image
-                src="/images/Network.png"
+                src="/images/Network.jpg"
                 alt="Network Diagram"
                 layout="fill"
                 objectFit="cover"
@@ -25,9 +25,10 @@ function SettingPage() {
                 className="rounded-lg"
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <LockClosedIcon className="h-30 w-24 text-gray-500 p-8" />
+                <LockClosedIcon className="h-30 w-24 text-black p-8" />
               </div>
             </div>
+            
             <div className="bg-gray-500 p-4 rounded-lg shadow flex items-center justify-center w-64 h-64">
               <LockClosedIcon className="h-24 w-24 text-white p-8" />
             </div>
@@ -38,6 +39,19 @@ function SettingPage() {
               <LockClosedIcon className="h-24 w-24 text-white p-8" />
             </div>
           </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-2">
+            <div className="rounded-lg shadow flex items-center justify-center w-64">
+              <h1 className="text-white">NetworkDiagram_main</h1>
+            </div>
+            {/* <div className="bg-gray-500 rounded-lg shadow flex items-center justify-center w-64">
+            </div>
+            <div className="bg-gray-500 rounded-lg shadow flex items-center justify-center w-64">
+            </div>
+            <div className="bg-gray-500 rounded-lg shadow flex items-center justify-center w-64">
+            </div> */}
+            
+          </div>
+          
         </div>
       </div>
     </main>
