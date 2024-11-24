@@ -114,7 +114,7 @@ def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_t
     return get_chat_gpt_response(prompt)
 
 
-@app.route('/alert', methods=['GET'])
+@app.route('/api/alert', methods=['GET'])
 def get_all_alert():
     filepath = 'data/log_data.csv'
     row_data = pd.read_csv(filepath)
@@ -138,7 +138,7 @@ def get_all_alert():
 
     return jsonify(alerts)
 
-@app.route('/solution', methods=['GET'])
+@app.route('/api/solution', methods=['GET'])
 def get_solution():
     alert_id = request.args.get('index')
     print(f"Received alertID: {alert_id}")  # Debug line
@@ -169,7 +169,7 @@ def get_solution():
     })
 
 
-@app.route('/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def chat():
     try:
         data = request.get_json()
@@ -186,7 +186,7 @@ def chat():
         return jsonify({"error": "An error occurred while processing the request"}), 500
 
 
-@app.route('/signup', methods=['POST'])
+@app.route('/api/signup', methods=['POST'])
 def signup():
     try:
         data = request.get_json()
@@ -208,7 +208,7 @@ def signup():
         print(f"MongoDB error: {traceback.format_exc()} : {e}")
         return jsonify(message="Error connecting to MongoDB"), 500
 
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def signin():
     try:
         data = request.get_json()
@@ -233,12 +233,12 @@ def signin():
         print(f"MongoDB error: {traceback.format_exc()} : {e}")
         return jsonify({"message": traceback.format_exc()}), 500
     
-@app.route('/protected', methods=['GET', 'POST'])
+@app.route('/api/protected', methods=['GET', 'POST'])
 @jwt_required()
 def protected(): 
     return jsonify(msg='ok')
 
-@app.route('/refresh', methods=['POST'])
+@app.route('/api/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
