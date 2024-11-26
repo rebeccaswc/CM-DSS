@@ -42,3 +42,7 @@ tzdata==2024.1
 urllib3==2.2.3
 Werkzeug==3.0.4
 yarl==1.11.1
+Pillow
+pytesseract
+langchain
+langchain_community
