@@ -10,6 +10,8 @@ export const signUpWithPythonService = async (email, password) => {
     const response = await api.post(`${apiUrl}/signup`, {
       email,
       password,
+    }, {
+      withCredentials: true,  
     });
     return response.data;
   } catch (e) {

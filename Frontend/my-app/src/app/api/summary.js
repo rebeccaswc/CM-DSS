@@ -5,6 +5,8 @@ export const getSummary = async (index) => {
     try {
         const response = await axios.get(`${apiUrl}/solution`, {
           params:  {index}
+        }, {
+          withCredentials: true,  
         });
         return response.data;
       } catch (error) {

@@ -5,6 +5,8 @@ export const getAlertList = async (sort) => {
   try {
     const response = await axios.get(`${apiUrl}/alert`,{
       params: {sort}
+    }, {
+      withCredentials: true,  // 確保攜帶 JWT 
     });
     if (Array.isArray(response.data)) {
       return (response.data);

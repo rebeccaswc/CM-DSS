@@ -11,6 +11,8 @@ export const logInWithPythonService = async (email, password) => {
     const response = await api.post(`/login`, {
       email,
       password,
+    }, {
+      withCredentials: true, 
     });
 
     if (response) {
