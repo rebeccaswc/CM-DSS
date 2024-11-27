@@ -20,7 +20,7 @@ load_dotenv()
 
 # Initialize Flask
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "https://cm-dss-front-end.onrender.com"}})
 
 # Initialize OpenAI API
 openai.api_key = os.getenv("OPENAI_API_KEY")
