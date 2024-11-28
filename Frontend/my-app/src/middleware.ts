@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
+  console.log("Cookies in middleware:", req.cookies);
   const token = req.cookies.get("access_token_cookie")?.value;
 
   // 驗證 token 是否存在
