@@ -4,10 +4,9 @@ const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API;
 export const getChatResponse = async (msg) => {
   try {
     const response = await axios.post(`${apiUrl}/chat`,{
-        "message": msg
-    }, {
-      withCredentials: true, 
-    });
+        "message": msg,
+        withCredentials: true
+      });
     if (response) {
         return response.data;
     }

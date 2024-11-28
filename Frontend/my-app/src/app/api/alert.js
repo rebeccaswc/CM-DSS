@@ -4,9 +4,8 @@ const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API;
 export const getAlertList = async (sort) => {
   try {
     const response = await axios.get(`${apiUrl}/alert`,{
-      params: {sort}
-    }, {
-      withCredentials: true,  // 確保攜帶 JWT 
+      params: {sort},
+      withCredentials: true
     });
     if (Array.isArray(response.data)) {
       return (response.data);
