@@ -19,11 +19,15 @@ import traceback
 import uuid
 from urllib.parse import quote_plus
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from langchain.llms import OpenAI
 from langchain import PromptTemplate, LLMChain
 
 # Load environment variables from .env
 load_dotenv()
+
+# Ensure the directory exists
+os.makedirs('temp_images', exist_ok=True)
 
 # Initialize Flask
 app = Flask(__name__)
@@ -97,11 +101,12 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
-# Ｅxtract OCR text
+# Extract OCR text
 def extract_ocr_text(image_path):
     image = Image.open(image_path)
     return pytesseract.image_to_string(image)
 
+# Gen Image Analysis docu.
 def process_image(image_path):
     # OCR text extraction
     ocr_text = extract_ocr_text(image_path)
@@ -113,6 +118,7 @@ def process_image(image_path):
     response = openai.ChatCompletion.create(
         model="gpt-4o-mini",
         messages=[
+            {"role": "system", "content": "You are a cybersecurity professional specializing in network architecture assessment."},
             {
                 "role": "user",
                 "content": [
@@ -137,30 +143,33 @@ def process_image(image_path):
         ],
     )
     
-    # Combine OCR and GPT-4o-mini results
-    gpt_response = response.choices[0].message["content"]
-    combined_ocr_and_gpt_image_analysis = (
-        f"### OCR Text Extracted:\n{ocr_text}\n\n"
-        f"### GPT-4o-mini Analysis:\n{gpt_response}\n\n"
-        f"### Combined Insights:\n"
-        f"Analyze the above OCR and GPT-generated details to create a detailed description "
-        f"of the network architecture diagram as requested."
-    )
+    # image analysis result
+    image_analysis_response = response.choices[0].message["content"]
+    # combined_ocr_and_gpt_image_analysis = (
+    #     f"### OCR Text Extracted:\n{ocr_text}\n\n"
+    #     f"### Image Analysis:\n{image_analysis_response}\n\n"
+    #     f"### Combined Insights:\n"
+    #     f"Analyze the above OCR and Image details to create a detailed description of the network architecture diagram as requested."
+    # )
     
-    return combined_ocr_and_gpt_image_analysis
+    # return combined_ocr_and_gpt_image_analysis
+    return image_analysis_response
 
 
-def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_technique, rule_id, fired_times, severity_level, timestamp):
+def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_technique, rule_id, fired_times, severity_level, timestamp, image_analysis):
     
     threat_name = f"Incident Report for Rule ID: {rule_id}"
     date = timestamp
     impact = f"Severity Level: {severity_level}, Fired Times: {fired_times}"
     key_points = f"Rule Description: {rule_description}, Source IP: {source_ip}, MITRE ATT&CK Techniques: {mitre_attack_technique}"
+    
+    # Default recommendations (can be overridden later based on image analysis)
     recommendations = [
         "Review and update authentication mechanisms.",
         "Enhance monitoring for abnormal login attempts."
     ]
 
+    # Start building the report
     prompt = f"""
     # Threat Report
     ## Overview
@@ -169,15 +178,39 @@ def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_t
     - **Date of Occurrence:** {date}
     - **Impact:** {impact}
 
-    ## Key Point
+    ## Key Points
     {key_points}
-
-    ## Mitigation Recommendations
-    - *Mitigation recommendation 1*: {recommendations[0]}
-    - *Mitigation recommendation 2*: {recommendations[1]}
-
-    ## Conclusion
     """
+
+    # if image analysis is provided that add Comprehensive Analysis 
+    if image_analysis:
+        prompt += f"""
+        ## Comprehensive Analysis:
+        Based on the alert data and the analysis of the network architecture image, the following observations are made:
+        - The rule '{rule_description}' triggered an alert due to activity from source IP {source_ip}, indicating potential malicious behavior.
+        - {image_analysis}
+
+        ## Mitigation Recommendations Based on Image Analysis:
+        Based on the analysis of the network architecture, the following mitigation steps are recommended:
+        - *Recommendation 1*: Implement network segmentation to isolate critical systems.
+        - *Recommendation 2*: Enhance logging and monitoring for specific devices identified in the architecture.
+        """
+
+    # if no image analysis that add standard Mitigation Recommendations 
+    if not image_analysis:
+        prompt += f"""
+        ## Mitigation Recommendations:
+        - *Mitigation recommendation 1*: {recommendations[0]}
+        - *Mitigation recommendation 2*: {recommendations[1]}
+        """
+
+    # Add Conclusion
+    prompt += """
+    ## Conclusion:
+    Based on the comprehensive analysis and mitigation recommendations, we suggest immediate action to address the identified threat and minimize the risk of future incidents.
+    """
+
+    # Return the final response from ChatGPT (or any other relevant model)
     return get_chat_gpt_response(prompt)
 
 
@@ -206,20 +239,31 @@ def get_all_alert():
     return jsonify(alerts)
 
 
+
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
         data = request.form.to_dict()
         user_message = data.get("message")
         alert_id = request.args.get('alert_id') or data.get('alert_id')
-        image = request.files.get("file")
         session_id = data.get("session_id") or str(uuid.uuid4())
+
+        # Get the image from the uploaded file
+        image = request.files.get("file")
 
         # Validate inputs
         if not alert_id:
-            return jsonify({"error": "Either alert_id"}), 400
+            return jsonify({"error": "Either alert_id is missing"}), 400
 
-        # init conversation contexts
+        if image:
+            # Save the image to a temporary file
+            image_filename = secure_filename(image.filename)
+            image_path = os.path.join("temp_images", image_filename)
+            image.save(image_path)
+        else:
+            image_path = None
+
+        # Init conversation contexts
         if session_id not in conversation_contexts:
             conversation_contexts[session_id] = []
 
@@ -241,26 +285,38 @@ def chat():
             severity_level = row_data['Severity Level']
             timestamp = row_data['Timestamp']
 
-            # Generate the alert report
-            report = generate_threat_report(
-                alert_id,
-                rule_description,
-                source_ip,
-                mitre_attack_technique,
-                rule_id,
-                fired_times,
-                severity_level,
-                timestamp
-            )
-            # print(f"Generated report: {report}") 
+            # Process image if provided
+            if image_path:
+                image_result = process_image(image_path)
+                if not image_result:
+                    return jsonify({"error": "Failed to process image"}), 500
+                # Gen report with image analysis
+                report = generate_threat_report(
+                    alert_id,
+                    rule_description,
+                    source_ip,
+                    mitre_attack_technique,
+                    rule_id,
+                    fired_times,
+                    severity_level,
+                    timestamp,
+                    image_result
+                )
+                conversation_contexts[session_id].append(f"### Image Analysis:\n{image_result}")
+            else:
+                # Gen report without image analysis
+                report = generate_threat_report(
+                    alert_id,
+                    rule_description,
+                    source_ip,
+                    mitre_attack_technique,
+                    rule_id,
+                    fired_times,
+                    severity_level,
+                    timestamp,
+                    image_analysis=None
+                )
             conversation_contexts[session_id].append(f"### Alert Report:\n{report}")
-
-        # image processing
-        if image:
-            image_result = process_image(image)
-            if not image_result:
-                return jsonify({"error": "Failed to process image"}), 500
-            conversation_contexts[session_id].append(f"### Image Analysis:\n{image_result}")
 
         # User message processing
         if user_message:
@@ -271,9 +327,7 @@ def chat():
 
         # Final response
         final_response = {
-            # "session_id": session_id,
             "alert_report": report,
-            "image_analysis": image_result,
             "chat_response": response_message,
         }
         return jsonify(final_response)
