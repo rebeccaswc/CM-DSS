@@ -223,8 +223,10 @@ def signin():
         if user and check_password_hash(user["password"], password):
             access_token = create_access_token(identity=email)
             print(access_token)
+            response = make_response(jsonify({"message": "Cookie has been set"}))
+
             response = jsonify({"message": "Sign in successfully!"})
-            response.set_cookie('access_token_cookie', value=access_token, httponly=False, secure=True, samesite='None',path='/',)
+            response.set_cookie('access_token_cookie', value=access_token, httponly=False, secure=True, samesite='None',path='/',domain: "onrender.com")
             return response, 200
         else:
             return jsonify({"message": "Invalid email or password"}), 401
