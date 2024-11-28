@@ -224,7 +224,7 @@ def signin():
             access_token = create_access_token(identity=email)
             print(access_token)
             response = jsonify({"message": "Sign in successfully!"})
-            response.set_cookie('access_token_cookie', value=access_token, httponly=False, secure=True, samesite='None')
+            response.set_cookie('access_token_cookie', value=access_token, httponly=False, secure=True, samesite='None',path='/',)
             return response, 200
         else:
             return jsonify({"message": "Invalid email or password"}), 401
