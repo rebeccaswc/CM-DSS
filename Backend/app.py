@@ -44,16 +44,22 @@ username = os.getenv('MONGO_USERNAME')
 password = os.getenv('MONGO_PASSWORD')
 cluster = os.getenv('MONGO_CLUSTER')
 database = os.getenv('MONGO_DATABASE')
-encoded_password = quote_plus(password)
+log_database = os.getenv('LOG_DATABASE')
 
-# MongoDB Connection
-uri = f'mongodb+srv://{username}:{encoded_password}@{cluster}/{database}?retryWrites=true&w=majority&appName=UserDB'
-client = pymongo.MongoClient(
-    uri,
-    tlsCAFile=certifi.where()
-)
-db = client[database]
-collection = db['user']
+def get_mongo_client(username, password, cluster, database):
+    encoded_password = quote_plus(password)
+    uri = f'mongodb+srv://{username}:{encoded_password}@{cluster}/{database}?retryWrites=true&w=majority&appName=UserDB'
+    return pymongo.MongoClient(uri, tlsCAFile=certifi.where())
+
+# Connect to USER_DB
+user_client = get_mongo_client(username, password, cluster, database)
+user_db = user_client[database]
+user_collection = user_db['user']
+
+# Connect to LOG_DB
+log_client = get_mongo_client(username, password, cluster, log_database)
+log_db = log_client[log_database]
+log_collection = log_db['log']
 
 # Initialize jwt token
 jwt = JWTManager()
@@ -63,7 +69,6 @@ app.config['JWT_TOKEN_LOCATION'] = ['headers', 'query_string', 'cookies']
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 15)))
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = datetime.timedelta(minutes=int(os.getenv('JWT_REFRESH_TOKEN_EXPIRES', 1440)))
 jwt.init_app(app)
-
 
 def open_file(filepath):
     with open(filepath, 'r', encoding='UTF-8') as file:
@@ -347,11 +352,11 @@ def signup():
         if not email or not password:
             return jsonify({"message":"Missing email or password"}) , 400
         
-        if collection.find_one({"email": email}):
+        if user_collection.find_one({"email": email}):
             return jsonify({"message": "Email already exists"})  ,409
 
         hasehd_password = generate_password_hash(password)
-        collection.insert_one({"email":email,"password":hasehd_password})
+        user_collection.insert_one({"email":email,"password":hasehd_password})
 
         return jsonify(message="User registered successfully created") , 201
     
@@ -369,7 +374,7 @@ def signin():
         if not email or not password:
             return jsonify({"message": "Missing email or password"}), 400
         
-        user = collection.find_one({"email": email})
+        user = user_collection.find_one({"email": email})
         
         if user and check_password_hash(user["password"], password):
             access_token = create_access_token(identity=email)
