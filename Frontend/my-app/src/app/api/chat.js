@@ -1,12 +1,9 @@
-import axios from "axios";
-const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API;
+import api from './api';
 
 export const getChatResponse = async (msg) => {
   try {
-    const response = await axios.post(`${apiUrl}/chat`,{
-        "message": msg,
-        withCredentials: true
-      });
+    const response = await api.post(`/chat`,{
+        "message": msg      });
     if (response) {
         return response.data;
     }

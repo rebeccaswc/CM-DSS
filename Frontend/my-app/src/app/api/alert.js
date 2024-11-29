@@ -1,12 +1,9 @@
-import axios from "axios";
-const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API;
+import api from './api';
 
 export const getAlertList = async (sort) => {
   try {
-    const response = await axios.get(`${apiUrl}/alert`,{
-      params: {sort},
-      withCredentials: true
-    });
+    const response = await api.get(`/alert`,{
+      params: {sort}    });
     if (Array.isArray(response.data)) {
       return (response.data);
     } else {
