@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { logInWithPythonService } from "./login.js";
+import { logInWithPythonService } from "../api/login.js";
 import InputField from "./InputField.jsx";
 import useStore from "../../useStore.js";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
@@ -90,9 +90,6 @@ function LoginForm() {
                 Remember me for 30 days
               </label>
             </div>
-            <a href="#" className="text-[#B366AE] text-xs">
-              Forgot Password?
-            </a>
           </div>
 
           <button

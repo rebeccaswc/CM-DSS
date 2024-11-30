@@ -378,16 +378,44 @@ def signin():
         
         if user and check_password_hash(user["password"], password):
             access_token = create_access_token(identity=email)
-            print(access_token)
-            response = jsonify({"message": "Sign in successfully!"})
-            response.set_cookie('access_token_cookie', value=access_token, httponly=True, secure=True, samesite='None')
-            return response, 200
+            refresh_token = create_refresh_token(identity=email)
+            # response.set_cookie('access_token_cookie', value=access_token, httponly=True, secure=True, samesite='None')
+            return jsonify({
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }), 200
         else:
             return jsonify({"message": "Invalid email or password"}), 401
 
     except pymongo.errors.PyMongoError as e:
         print(f"MongoDB error: {traceback.format_exc()} : {e}")
         return jsonify({"message": traceback.format_exc()}), 500
+    
+
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+        user = user_collection.find_one({"email": email})
+
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+
+        if not check_password_hash(user["password"], current_password):
+            return jsonify({"message": "Current password is incorrect"}), 401
+
+        # update password
+        hashed_password = generate_password_hash(new_password)
+        user_collection.update_one({"email": email}, {"$set": {"password": hashed_password}})
+
+        return jsonify({"message": "Password updated successfully"}), 200
+
+    except pymongo.errors.PyMongoError as e:
+        print(f"MongoDB error: {traceback.format_exc()} : {e}")
+        return jsonify({"message": "Error updating password"}), 500
     
 @app.route('/protected', methods=['GET', 'POST'])
 @jwt_required()
