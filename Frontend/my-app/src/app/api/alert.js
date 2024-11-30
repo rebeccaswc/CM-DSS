@@ -1,8 +1,8 @@
-import axios from "axios";
+import api from './api';
 
 export const getAlertList = async (sort) => {
   try {
-    const response = await axios.get('http://127.0.0.1:3000/alert',{
+    const response = await api.get('/alert',{
       params: {sort}
     });
     if (Array.isArray(response.data)) {

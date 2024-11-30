@@ -1,8 +1,8 @@
-import axios from "axios";
+import api from './api';
 
 export const getSummary = async (index) => {
     try {
-        const response = await axios.get('http://127.0.0.1:3000/solution', {
+        const response = await api.get('/solution', {
           params:  {index}
         });
         return response.data;

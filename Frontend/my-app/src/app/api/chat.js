@@ -1,8 +1,8 @@
-import axios from "axios";
+import api from './api';
 
 export const getChatResponse = async (msg) => {
   try {
-    const response = await axios.post('http://127.0.0.1:3000/chat',{
+    const response = await api.post('/chat',{
         "message": msg
     })
     if (response) {
