@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signUpWithPythonService } from "../api/signup.js";
+import { signUpWithPythonService } from "./signup.js";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import InputField from "./InputField.jsx";
 
