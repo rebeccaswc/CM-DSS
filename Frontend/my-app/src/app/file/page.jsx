@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import useStore from "../../useStore";
 import Sidebar from "./Sidebar";
 import {
   CloudArrowUpIcon,
@@ -15,6 +16,7 @@ import AuthGuard from "../../components/ui/AuthGuard";
 function FilePage() {
   const [files, setFiles] = useState([]);
   const [titles, setTitles] = useState({});
+  const setImage = useStore((state) => state.setImage);
 
   useEffect(() => {
     const storedImages = JSON.parse(localStorage.getItem("uploadedImages"));
@@ -27,12 +29,20 @@ function FilePage() {
     }
   }, []);
 
+  const setData = (url) => {
+    setImage(url);
+  }
+
   const handleImageUpload = (event) => {
     const uploadedFiles = Array.from(event.target.files);
-    const imageUrls = uploadedFiles.map((file) => URL.createObjectURL(file));
-    const newFiles = [...files, ...imageUrls];
+    const imageUrl = uploadedFiles.map((file) => URL.createObjectURL(file));
+    const newFiles = [...files, ...imageUrl];
     setFiles(newFiles);
     localStorage.setItem("uploadedImages", JSON.stringify(newFiles));
+
+    const imageData = new FormData();
+    imageData.append('file', imageUrl);
+    setData(imageData);
   };
 
   const handleUploadClick = () => {
