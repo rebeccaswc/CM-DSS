@@ -7,4 +7,17 @@ const api = axios.create({
   withCredentials: true,
 });
 
+api.interceptors.request.use((config) => {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("access_token_cookie="))
+    ?.split("=")[1];
+
+  if (token) {
+    config.headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
 export default api;
