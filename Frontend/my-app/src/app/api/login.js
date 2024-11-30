@@ -8,6 +8,7 @@ export const logInWithPythonService = async (email, password) => {
     });
 
     if (response) {
+      document.cookie = `access_token_cookie=${response.data.access_token_cookie}; Path=/; Secure; SameSite=None`;
       return response.data;
     }
   } catch (e) {
