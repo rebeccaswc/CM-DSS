@@ -29,8 +29,8 @@ function FilePage() {
     }
   }, []);
 
-  const setData = (url) => {
-    setImage(url);
+  const setData = (file) => {
+    setImage(file);
   }
 
   const handleImageUpload = (event) => {
@@ -41,7 +41,7 @@ function FilePage() {
     localStorage.setItem("uploadedImages", JSON.stringify(newFiles));
 
     const imageData = new FormData();
-    imageData.append('file', imageUrl);
+    imageData.append('file', event.target.files[0]);
     setData(imageData);
   };
 

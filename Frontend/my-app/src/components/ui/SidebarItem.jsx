@@ -1,13 +1,20 @@
 "use client";
 import React from "react";
 import { useRouter } from 'next/navigation';
+import useStore from "../../useStore";
 
 function SidebarItem({ icon, text, isActive }) {
   const router = useRouter();
   var path = '/' + text
+  const alertID  = useStore((state) => state.alertID);
 
   const handleClick = () => {
-    router.push(path.toLowerCase());
+    if (path == '/Chat') {
+      router.push(`/chat?alertID=${alertID}`);
+    }else{
+      router.push(path.toLowerCase());
+    }
+    
   }
 
   return (
