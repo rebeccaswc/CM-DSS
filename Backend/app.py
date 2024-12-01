@@ -341,7 +341,33 @@ def chat():
         print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
+@app.route('/info/amount', methods=['GET'])
+def get_alert_amount():
+    filepath = "./data/log_data.csv"
+    df = pd.read_csv(filepath)
+    alert_amount = len(df)
+    return jsonify(alert_amount)
 
+@app.route('/info/level', methods=['GET'])
+def get_alert_security_level_amount():
+    filepath = "./data/log_data.csv"
+    df = pd.read_csv(filepath)
+    alert_level_amount = df['Severity Level'].astype(str).value_counts().to_dict()
+    return jsonify(alert_level_amount)
+
+@app.route('/info/technique', methods=['GET'])
+def get_alert_technique_amount():
+    filepath = "./data/log_data.csv"
+    df = pd.read_csv(filepath)
+    alert_technique_amount = df['MITRE ATT&CK Technique'].astype(str).value_counts().to_dict()
+    return jsonify(alert_technique_amount)
+
+@app.route('/info/timestamp', methods=['GET'])
+def get_alert_timestamp_amount():
+    filepath = "./data/log_data.csv"
+    df = pd.read_csv(filepath)
+    alert_technique_amount = df['Timestamp'].astype(str).value_counts().to_dict()
+    return jsonify(alert_technique_amount)
 
 @app.route('/signup', methods=['POST'])
 def signup():
