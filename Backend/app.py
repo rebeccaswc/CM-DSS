@@ -83,6 +83,24 @@ def read_row_from_csv_by_alert_id(filepath, alert_id):
         return filtered_df.iloc[0]
     else:
         return None
+    
+def get_logdb_by_alert_id(collection, alert_id):
+    query = {"alertID": int(alert_id)}
+    document = collection.find_one(query)
+    
+    if document:
+        return {
+            "alert_id": document.get("alertID"),
+            "rule_description": document.get("Rule Description"),
+            "source_ip": document.get("Source IP"),
+            "mitre_attack_technique": document.get("MITRE ATT&CK Technique"),
+            "rule_id": document.get("Rule ID"),
+            "fired_times": document.get("Fired Times"),
+            "severity_level": document.get("Severity Level"),
+            "timestamp": document.get("Timestamp")
+        }
+    else:
+        return None
 
 def get_chat_gpt_response(prompt):
     try:
@@ -277,18 +295,22 @@ def chat():
 
         # alert id processing
         if alert_id:
-            filepath = 'data/log_data.csv'
-            row_data = read_row_from_csv_by_alert_id(filepath, alert_id)
+            row_data = get_logdb_by_alert_id(log_collection, alert_id)
             if row_data is None:
                 return jsonify({"error": "Alert not found"}), 404
+                        
+            # filepath = 'data/log_data.csv'
+            # row_data = read_row_from_csv_by_alert_id(filepath, alert_id)
+            # if row_data is None:
+            #     return jsonify({"error": "Alert not found"}), 404
 
-            rule_description = row_data['Rule Description']
-            source_ip = row_data['Source IP']
-            mitre_attack_technique = row_data['MITRE ATT&CK Technique']
-            rule_id = row_data['Rule ID']
-            fired_times = row_data['Fired Times']
-            severity_level = row_data['Severity Level']
-            timestamp = row_data['Timestamp']
+            rule_description = row_data['rule_description']
+            source_ip = row_data['source_ip']
+            mitre_attack_technique = row_data['mitre_attack_technique']
+            rule_id = row_data['rule_id']
+            fired_times = row_data['fired_times']
+            severity_level = row_data['severity_level']
+            timestamp = row_data['timestamp']
 
             # Process image if provided
             if image_path:
