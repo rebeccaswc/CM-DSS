@@ -342,6 +342,7 @@ def chat():
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
+
 @app.route('/signup', methods=['POST'])
 def signup():
     try:
