@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import useStore from "../../useStore";
 import {
   Table,
   TableBody,
@@ -17,6 +18,8 @@ function Alert() {
   const [datas, setDatas] = useState([]);
   var sort = "";
   const [showAll, setShowAll] = useState(false);
+  const setAlertID = useStore((state) => state.setAlertID);
+  const alertID = useStore((state) => state.alertID);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,11 +35,16 @@ function Alert() {
   }, []);
 
   const router = useRouter();
-  var alertID;
+  var id;
+
+  const setID = (index) => {
+    setAlertID(index);
+  }
 
   const handleClick = (index) => {
-    alertID = datas[index]?.alertID;
-    router.push(`/query?alertID=${alertID}`);
+    id = datas[index]?.alertID;
+    setID(id);
+    router.push(`/chat?{alertID=${id}}`);
     console.log(alertID);
   };
 
@@ -108,7 +116,7 @@ function Alert() {
                   <TableCell className="text-white px-8 py-3 items-center whitespace-nowrap">
                     {data.number}
                   </TableCell>
-                  <TableCell className="text-white px-8 py-3 items-center whitespace-nowrap">
+                  <TableCell className="text-white px-2 py-3 items-center whitespace-nowrap">
                     {data.alertID}
                   </TableCell>
                   <TableCell className="text-white px-4 py-3 items-center whitespace-nowrap">

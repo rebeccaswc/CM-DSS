@@ -1,16 +1,20 @@
 import Sidebar from "./Sidebar";
 import Content from "./Content";
+import AuthGuard from "../../components/ui/AuthGuard";
 
 export default function HomePage() {
   return (
+    <AuthGuard>
     <main className="h-screen flex">
       <div className="w-2/12">
-        <Sidebar/>
+          <Sidebar />
       </div>
       <div className="w-10/12 bg-[#1d203e]">
-        <Content/>
+          <Content />
       </div>
     </main>
+    </AuthGuard>
+
   //   <main className="h-screen w-screen overflow-hidden">
   //   <div className="flex h-full w-full">
   //     <div className="w-1/12 h-full">
