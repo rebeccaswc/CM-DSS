@@ -149,7 +149,7 @@ function FilePage() {
             <div className="bg-slate-400 text-white rounded-lg p-2 flex items-center justify-center fixed bottom-4 shadow-lg">
               <ExclamationTriangleIcon className="h-6 w-6 mr-2" />
               <p className="text-sm">
-                Only Cisco Packet Tracer network diagrams can be uploaded.
+                Only network diagrams can be uploaded.
               </p>
             </div>
           </div>
