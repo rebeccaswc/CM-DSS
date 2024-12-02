@@ -17,6 +17,7 @@ function InfoList() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const InfoData = [
     { title: "Account", content: email },
@@ -36,8 +37,17 @@ function InfoList() {
     localStorage.removeItem("access_token");
     setIsModalVisible(true);
   };
-  // ChangePassword unction
+  // ChangePassword function
   const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword) {
+      setMessage("Please fill in both fields.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setMessage("Min 6 characters for password.");
+      return;
+    }
+    setIsSubmitting(true);
     try {
       await changePassword(email, currentPassword, newPassword);
       setMessage("Password updated successfully!");
@@ -46,9 +56,12 @@ function InfoList() {
       setTimeout(() => {
         setIsChangePasswordModalVisible(false);
         setMessage("");
+        setIsSubmitting(false);
       }, 1000);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error changing password");
+      const errorMessage = error.response?.data?.message || "Error changing password";
+      setMessage(errorMessage);
+      setIsSubmitting(false);
     }
   };
   return (
@@ -115,13 +128,16 @@ function InfoList() {
               onChange={(e) => setNewPassword(e.target.value)}
               className="px-4 py-2 border rounded-lg mb-4 w-full"
             />
-            {message && <p className="text-red-500 mb-2">{message}</p>}
+            {message && <p className={`mb-2 ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>{message}</p>}
             <button
               onClick={handleChangePassword}
-              className="px-4 py-2 bg-[#B366AE] text-white rounded-lg mb-2"
+              className={`px-4 py-2 text-white rounded-lg mb-2 ${
+                isSubmitting ? "bg-gray-400" : "bg-[#B366AE]"
+              }`}
+              disabled={isSubmitting}
             >
-              Submit
-            </button>
+              {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
             <button
               onClick={() => setIsChangePasswordModalVisible(false)}
               className="px-4 py-2 bg-gray-500 text-white rounded-lg"
