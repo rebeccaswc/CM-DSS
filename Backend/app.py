@@ -128,7 +128,7 @@ def get_chat_gpt_response(prompt):
                 {"role": "system", "content": "You are a cybersecurity professional specializing in vulnerability assessment."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=750,
+            max_tokens=1024,
             temperature=0.2
         )
         
@@ -236,42 +236,48 @@ def generate_threat_report(alert_ID, rule_description, source_ip, mitre_attack_t
 
     # Start building the report
     prompt = f"""
-    # Threat Report
-    ## Overview
-    - **Alert ID:** {alert_ID}
-    - **Threat Name:** {threat_name}
-    - **Date of Occurrence:** {date}
-    - **Impact:** {impact}
-
-    ## Key Points
+    # 💡 **Threat Report**
+    ---
+    ## 📍 **Overview**
+    1. **Alert ID:** {alert_ID}
+    2. **Threat Name:** {threat_name}
+    3. **Date of Occurrence:** {date}
+    4. **Impact:** {impact}
+    
+    ---
+    ## 📍 **Key Points**
     {key_points}
+    ---
     """
 
     # if image analysis is provided that add Comprehensive Analysis 
     if image_analysis:
         prompt += f"""
-        ## Comprehensive Analysis:
+        ## 📍 **Comprehensive Analysis**
         Based on the alert data and the analysis of the network architecture image, the following observations are made:
         - The rule '{rule_description}' triggered an alert due to activity from source IP {source_ip}, indicating potential malicious behavior.
         - {image_analysis}
 
-        ## Mitigation Recommendations Based on Image Analysis:
+        ---
+
+        ## 📍 **Mitigation Recommendations Based on Image Analysis**
         Based on the analysis of the network architecture, the following mitigation steps are recommended:
-        - *Recommendation 1*: Implement network segmentation to isolate critical systems.
-        - *Recommendation 2*: Enhance logging and monitoring for specific devices identified in the architecture.
+        1. Recommendation 1: Implement network segmentation to isolate critical systems.
+        2. Recommendation 2: Enhance logging and monitoring for specific devices identified in the architecture.
         """
 
     # if no image analysis that add standard Mitigation Recommendations 
     if not image_analysis:
         prompt += f"""
-        ## Mitigation Recommendations:
-        - *Mitigation recommendation 1*: {recommendations[0]}
-        - *Mitigation recommendation 2*: {recommendations[1]}
+        ## 📍 **Mitigation Recommendations**
+        1. Mitigation recommendation 1: {recommendations[0]}
+        2. Mitigation recommendation 2: {recommendations[1]}
         """
 
     # Add Conclusion
     prompt += """
-    ## Conclusion:
+    ---
+    ## 📍 **Conclusion**
     Based on the comprehensive analysis and mitigation recommendations, we suggest immediate action to address the identified threat and minimize the risk of future incidents.
     """
 
@@ -351,122 +357,23 @@ def chat():
             )
             conversation_contexts[session_id].append(f"### Alert Report:\n{report}")
 
+        # User message processing
         if user_message:
             conversation_contexts[session_id].append(f"### User Question:\n{user_message}")
             combined_prompt = "\n\n".join(conversation_contexts[session_id])
             response_message = get_chat_gpt_response(combined_prompt)
             conversation_contexts[session_id].append(f"### System Response:\n{response_message}")
 
-        return jsonify({
+        # Final response
+        final_response = {
             "alert_report": report,
             "chat_response": response_message,
-        })
+        }
+        return jsonify(final_response)
 
     except Exception as e:
         print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
-        return jsonify({"error": "Internal server error"}), 500
-
-
-
-# @app.route('/chat', methods=['POST'])
-# def chat():
-#     try:
-#         data = request.form.to_dict()
-#         user_message = data.get("message")
-#         alert_id = request.args.get('alert_id') or data.get('alert_id')
-#         session_id = data.get("session_id") or str(uuid.uuid4())
-
-#         # Get the image from the uploaded file
-#         image = request.files.get("file")
-
-#         # Validate inputs
-#         if not alert_id:
-#             return jsonify({"error": "Either alert_id is missing"}), 400
-
-#         if image:
-#             # Save the image to a temporary file
-#             image_filename = secure_filename(image.filename)
-#             image_path = os.path.join("temp_images", image_filename)
-#             image.save(image_path)
-#         else:
-#             image_path = None
-
-#         # Init conversation contexts
-#         if session_id not in conversation_contexts:
-#             conversation_contexts[session_id] = []
-
-#         # Init response content
-#         report, image_result, response_message = None, None, None
-
-#         # alert id processing
-#         if alert_id:
-#             row_data = get_logdb_by_alert_id(log_collection, alert_id)
-#             if row_data is None:
-#                 return jsonify({"error": "Alert not found"}), 404
-                        
-#             # filepath = 'data/log_data.csv'
-#             # row_data = read_row_from_csv_by_alert_id(filepath, alert_id)
-#             # if row_data is None:
-#             #     return jsonify({"error": "Alert not found"}), 404
-
-#             rule_description = row_data['rule_description']
-#             source_ip = row_data['source_ip']
-#             mitre_attack_technique = row_data['mitre_attack_technique']
-#             rule_id = row_data['rule_id']
-#             fired_times = row_data['fired_times']
-#             severity_level = row_data['severity_level']
-#             timestamp = row_data['timestamp']
-
-#             # Process image if provided
-#             if image_path:
-#                 image_result = process_image(image_path)
-#                 if not image_result:
-#                     return jsonify({"error": "Failed to process image"}), 500
-#                 # Gen report with image analysis
-#                 report = generate_threat_report(
-#                     alert_id,
-#                     rule_description,
-#                     source_ip,
-#                     mitre_attack_technique,
-#                     rule_id,
-#                     fired_times,
-#                     severity_level,
-#                     timestamp,
-#                     image_result
-#                 )
-#                 conversation_contexts[session_id].append(f"### Image Analysis:\n{image_result}")
-#             else:
-#                 # Gen report without image analysis
-#                 report = generate_threat_report(
-#                     alert_id,
-#                     rule_description,
-#                     source_ip,
-#                     mitre_attack_technique,
-#                     rule_id,
-#                     fired_times,
-#                     severity_level,
-#                     timestamp,
-#                     image_analysis=None
-#                 )
-#             conversation_contexts[session_id].append(f"### Alert Report:\n{report}")
-
-#         # User message processing
-#         if user_message:
-#             conversation_contexts[session_id].append(f"### User Question:\n{user_message}")
-#             combined_prompt = "\n\n".join(conversation_contexts[session_id])
-#             response_message = get_chat_gpt_response(combined_prompt)
-#             conversation_contexts[session_id].append(f"### System Response:\n{response_message}")
-
-#         # Final response
-#         final_response = {
-#             "alert_report": report,
-#             "chat_response": response_message,
-#         }
-#         return jsonify(final_response)
-
-#     except Exception as e:
-#         print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
-#         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @app.route('/info/amount', methods=['GET'])
 def get_alert_amount():
