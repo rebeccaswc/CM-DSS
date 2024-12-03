@@ -1,7 +1,7 @@
 from PIL import Image
 import base64
 import io
-from flask import Flask, jsonify, request , make_response
+from flask import Flask, json, jsonify, request , make_response
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_required, create_refresh_token,get_jwt_identity
@@ -143,23 +143,6 @@ def get_chat_gpt_response(prompt):
     except Exception as e:
         print(f"Error in GPT response: {traceback.format_exc()} : {e}")
         return None
-
-# def get_chat_gpt_response(prompt):
-#     try:
-#         response = openai.ChatCompletion.create(
-#             model="gpt-4o-mini",
-#             messages=[
-#                 {"role": "system", "content": "You are a cybersecurity professional specializing in vulnerability assessment."},
-#                 {"role": "user", "content": prompt}
-#             ],
-#             max_tokens=750,
-#             temperature=0.2
-#         )   
-#         return response.choices[0].message['content'].strip()
-    
-#     except Exception as e:
-#         print(f"Error in GPT response: {traceback.format_exc()} : {e}")
-#         return None
 
 # Encode the image
 def encode_image(image_path):
@@ -317,12 +300,6 @@ def chat():
         user_message = data.get("message")
         alert_id = request.args.get('alert_id') or data.get('alert_id')
         session_id = data.get("session_id") or str(uuid.uuid4())
-
-        # Moderation for user message
-        if user_message:
-            moderation_result = moderation_chain.run(user_message)
-            if moderation_result["flagged"]:
-                return jsonify({"error": "Your input contains content that violates our policy. Please rephrase your request."}), 400
 
         # Get the image from the uploaded file
         image = request.files.get("file")
