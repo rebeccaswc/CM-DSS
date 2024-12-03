@@ -22,6 +22,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from langchain.llms import OpenAI
 from langchain import PromptTemplate, LLMChain
+from langchain.chains import OpenAIModerationChain
 
 # Load environment variables from .env
 load_dotenv()
@@ -38,6 +39,17 @@ conversation_contexts = {}
 
 # Initialize OpenAI API
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Initialize LangChain OpenAI model
+llm = OpenAI(
+    model="gpt-4o-mini",
+    openai_api_key=os.getenv("OPENAI_API_KEY"),
+    temperature=0.2,
+    max_tokens=750
+)
+
+# Initialize OpenAI Moderation Chain
+moderation_chain = OpenAIModerationChain()
 
 # Initialize MongoDB 
 username = os.getenv('MONGO_USERNAME')
@@ -104,6 +116,12 @@ def get_logdb_by_alert_id(collection, alert_id):
 
 def get_chat_gpt_response(prompt):
     try:
+        moderation_result = moderation_chain.invoke({"input": prompt})
+        
+        # Parse the result and check for flagged content
+        if "flagged" in moderation_result and moderation_result["flagged"]:
+            return "Your input contains content that violates our policy. Please rephrase your request."
+
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
@@ -112,12 +130,36 @@ def get_chat_gpt_response(prompt):
             ],
             max_tokens=750,
             temperature=0.2
-        )   
-        return response.choices[0].message['content'].strip()
+        )
+        
+        generated_text = response.choices[0].message['content'].strip()
+        moderation_result = moderation_chain.invoke({"input": generated_text})
+        
+        if "flagged" in moderation_result and moderation_result["flagged"]:
+            return "The generated response contains content that violates our policy. Please try a different request."
+
+        return generated_text
     
     except Exception as e:
         print(f"Error in GPT response: {traceback.format_exc()} : {e}")
         return None
+
+# def get_chat_gpt_response(prompt):
+#     try:
+#         response = openai.ChatCompletion.create(
+#             model="gpt-4o-mini",
+#             messages=[
+#                 {"role": "system", "content": "You are a cybersecurity professional specializing in vulnerability assessment."},
+#                 {"role": "user", "content": prompt}
+#             ],
+#             max_tokens=750,
+#             temperature=0.2
+#         )   
+#         return response.choices[0].message['content'].strip()
+    
+#     except Exception as e:
+#         print(f"Error in GPT response: {traceback.format_exc()} : {e}")
+#         return None
 
 # Encode the image
 def encode_image(image_path):
@@ -262,7 +304,6 @@ def get_all_alert():
     return jsonify(alerts)
 
 
-
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
@@ -271,97 +312,161 @@ def chat():
         alert_id = request.args.get('alert_id') or data.get('alert_id')
         session_id = data.get("session_id") or str(uuid.uuid4())
 
+        # Moderation for user message
+        if user_message:
+            moderation_result = moderation_chain.run(user_message)
+            if moderation_result["flagged"]:
+                return jsonify({"error": "Your input contains content that violates our policy. Please rephrase your request."}), 400
+
         # Get the image from the uploaded file
         image = request.files.get("file")
-
-        # Validate inputs
-        if not alert_id:
-            return jsonify({"error": "Either alert_id is missing"}), 400
-
+        image_path = None
         if image:
-            # Save the image to a temporary file
             image_filename = secure_filename(image.filename)
             image_path = os.path.join("temp_images", image_filename)
             image.save(image_path)
-        else:
-            image_path = None
 
-        # Init conversation contexts
         if session_id not in conversation_contexts:
             conversation_contexts[session_id] = []
 
-        # Init response content
+        # Initialize response content
         report, image_result, response_message = None, None, None
 
-        # alert id processing
         if alert_id:
             row_data = get_logdb_by_alert_id(log_collection, alert_id)
             if row_data is None:
                 return jsonify({"error": "Alert not found"}), 404
-                        
-            # filepath = 'data/log_data.csv'
-            # row_data = read_row_from_csv_by_alert_id(filepath, alert_id)
-            # if row_data is None:
-            #     return jsonify({"error": "Alert not found"}), 404
 
-            rule_description = row_data['rule_description']
-            source_ip = row_data['source_ip']
-            mitre_attack_technique = row_data['mitre_attack_technique']
-            rule_id = row_data['rule_id']
-            fired_times = row_data['fired_times']
-            severity_level = row_data['severity_level']
-            timestamp = row_data['timestamp']
-
-            # Process image if provided
-            if image_path:
-                image_result = process_image(image_path)
-                if not image_result:
-                    return jsonify({"error": "Failed to process image"}), 500
-                # Gen report with image analysis
-                report = generate_threat_report(
-                    alert_id,
-                    rule_description,
-                    source_ip,
-                    mitre_attack_technique,
-                    rule_id,
-                    fired_times,
-                    severity_level,
-                    timestamp,
-                    image_result
-                )
-                conversation_contexts[session_id].append(f"### Image Analysis:\n{image_result}")
-            else:
-                # Gen report without image analysis
-                report = generate_threat_report(
-                    alert_id,
-                    rule_description,
-                    source_ip,
-                    mitre_attack_technique,
-                    rule_id,
-                    fired_times,
-                    severity_level,
-                    timestamp,
-                    image_analysis=None
-                )
+            image_result = process_image(image_path) if image_path else None
+            report = generate_threat_report(
+                alert_id,
+                row_data['rule_description'],
+                row_data['source_ip'],
+                row_data['mitre_attack_technique'],
+                row_data['rule_id'],
+                row_data['fired_times'],
+                row_data['severity_level'],
+                row_data['timestamp'],
+                image_analysis=image_result
+            )
             conversation_contexts[session_id].append(f"### Alert Report:\n{report}")
 
-        # User message processing
         if user_message:
             conversation_contexts[session_id].append(f"### User Question:\n{user_message}")
             combined_prompt = "\n\n".join(conversation_contexts[session_id])
             response_message = get_chat_gpt_response(combined_prompt)
             conversation_contexts[session_id].append(f"### System Response:\n{response_message}")
 
-        # Final response
-        final_response = {
+        return jsonify({
             "alert_report": report,
             "chat_response": response_message,
-        }
-        return jsonify(final_response)
+        })
 
     except Exception as e:
         print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"error": "Internal server error"}), 500
+
+
+
+# @app.route('/chat', methods=['POST'])
+# def chat():
+#     try:
+#         data = request.form.to_dict()
+#         user_message = data.get("message")
+#         alert_id = request.args.get('alert_id') or data.get('alert_id')
+#         session_id = data.get("session_id") or str(uuid.uuid4())
+
+#         # Get the image from the uploaded file
+#         image = request.files.get("file")
+
+#         # Validate inputs
+#         if not alert_id:
+#             return jsonify({"error": "Either alert_id is missing"}), 400
+
+#         if image:
+#             # Save the image to a temporary file
+#             image_filename = secure_filename(image.filename)
+#             image_path = os.path.join("temp_images", image_filename)
+#             image.save(image_path)
+#         else:
+#             image_path = None
+
+#         # Init conversation contexts
+#         if session_id not in conversation_contexts:
+#             conversation_contexts[session_id] = []
+
+#         # Init response content
+#         report, image_result, response_message = None, None, None
+
+#         # alert id processing
+#         if alert_id:
+#             row_data = get_logdb_by_alert_id(log_collection, alert_id)
+#             if row_data is None:
+#                 return jsonify({"error": "Alert not found"}), 404
+                        
+#             # filepath = 'data/log_data.csv'
+#             # row_data = read_row_from_csv_by_alert_id(filepath, alert_id)
+#             # if row_data is None:
+#             #     return jsonify({"error": "Alert not found"}), 404
+
+#             rule_description = row_data['rule_description']
+#             source_ip = row_data['source_ip']
+#             mitre_attack_technique = row_data['mitre_attack_technique']
+#             rule_id = row_data['rule_id']
+#             fired_times = row_data['fired_times']
+#             severity_level = row_data['severity_level']
+#             timestamp = row_data['timestamp']
+
+#             # Process image if provided
+#             if image_path:
+#                 image_result = process_image(image_path)
+#                 if not image_result:
+#                     return jsonify({"error": "Failed to process image"}), 500
+#                 # Gen report with image analysis
+#                 report = generate_threat_report(
+#                     alert_id,
+#                     rule_description,
+#                     source_ip,
+#                     mitre_attack_technique,
+#                     rule_id,
+#                     fired_times,
+#                     severity_level,
+#                     timestamp,
+#                     image_result
+#                 )
+#                 conversation_contexts[session_id].append(f"### Image Analysis:\n{image_result}")
+#             else:
+#                 # Gen report without image analysis
+#                 report = generate_threat_report(
+#                     alert_id,
+#                     rule_description,
+#                     source_ip,
+#                     mitre_attack_technique,
+#                     rule_id,
+#                     fired_times,
+#                     severity_level,
+#                     timestamp,
+#                     image_analysis=None
+#                 )
+#             conversation_contexts[session_id].append(f"### Alert Report:\n{report}")
+
+#         # User message processing
+#         if user_message:
+#             conversation_contexts[session_id].append(f"### User Question:\n{user_message}")
+#             combined_prompt = "\n\n".join(conversation_contexts[session_id])
+#             response_message = get_chat_gpt_response(combined_prompt)
+#             conversation_contexts[session_id].append(f"### System Response:\n{response_message}")
+
+#         # Final response
+#         final_response = {
+#             "alert_report": report,
+#             "chat_response": response_message,
+#         }
+#         return jsonify(final_response)
+
+#     except Exception as e:
+#         print(f"Error in /chat endpoint: {traceback.format_exc()} : {e}")
+#         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @app.route('/info/amount', methods=['GET'])
 def get_alert_amount():
